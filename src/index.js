@@ -2,7 +2,7 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, Collection } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
-
+const connectDB = require('./config/db');  // Thay đổi đường dẫn import
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -10,6 +10,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
+connectDB();  // Kết nối với MongoDB
 
 // Tạo Collection để lưu các lệnh Slash
 client.commands = new Collection();
@@ -23,12 +24,10 @@ if (fs.existsSync(commandsPath)) {
         const command = require(path.join(commandsPath, file));
 
         if (!command || !command.data || typeof command.execute !== "function") {
-            // console.warn(`⚠️ Bỏ qua file '${file}' vì không phải là lệnh Slash hợp lệ.`);
             continue;
         }
 
         client.commands.set(command.data.name, command);
-        // console.log(`[✅] Đã load lệnh Slash: /${command.data.name}`);
     }
 } else {
     console.error("❌ Không tìm thấy thư mục 'commands'!");
@@ -47,12 +46,3 @@ if (fs.existsSync(eventsPath)) {
 // Kết nối bot
 const config = require("./config/config.js");
 client.login(config.token);
-
-
-// client.on('interactionCreate', (interaction) => {
-//     if (!interaction.isChatInputCommand()) return;
-//     console.log(interaction.commandName)
-//     if (interaction.commandName === 'test') {
-//         interaction.reply('✅ Bot đang hoạt động bình thường!')
-//     }
-// })
