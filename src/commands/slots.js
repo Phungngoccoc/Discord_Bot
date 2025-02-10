@@ -4,7 +4,11 @@ module.exports = {
     name: 'slot',
     description: '🎰 Chơi máy đánh bạc với hiệu ứng quay và đặt cược!',
     execute: async (message) => {
-        const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇'];
+        if (message.content.includes('help')) {
+            return message.reply(`📜 **Hướng dẫn chơi Slot** 📜\n\n🎰 **Cách chơi:**\n- Nhập lệnh \`!slot <số tiền cược>\` để quay máy đánh bạc.\n- Hệ thống sẽ quay 10 ô slot với các biểu tượng ngẫu nhiên.\n\n💰 **Tỷ lệ thắng:**\n- 2 biểu tượng trùng: Hoàn lại 25% tiền cược.\n- 3 biểu tượng trùng: Hoàn lại 50% tiền cược.\n- 4 biểu tượng trùng: Hoàn lại 100% tiền cược.\n- 5 biểu tượng trùng: Thắng x2 tiền cược.\n- 6 biểu tượng trùng: Thắng x3 tiền cược.\n- 7 biểu tượng trùng: Thắng x4 tiền cược.\n- 8 biểu tượng trùng: Thắng x5 tiền cược.\n- 9 biểu tượng trùng: Thắng x10 tiền cược.\n- 10 biểu tượng trùng: Thắng x100 tiền cược.\n\nChúc bạn may mắn! 🍀`);
+        }
+
+        const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇', '🍎', '💎'];
 
         // Lấy số tiền cược từ tin nhắn
         const match = message.content.match(/\d+/);
@@ -26,54 +30,56 @@ module.exports = {
 
         // Biểu tượng đang quay
         const loadingIcon = '<a:slot:1338518091973263443>';
-        let msg = await message.reply(`| ${loadingIcon} | ${loadingIcon} | ${loadingIcon} |\n🎰 Đang quay máy đánh bạc với ${betAmount} coin...`);
+        let msg = await message.reply(`| ${loadingIcon} `.repeat(10) + `|
+🎰 Đang quay máy đánh bạc với ${betAmount} coin...`);
 
-        // Quay từng biểu tượng một
+        // Quay từng ô slot một
         const spinSlots = () => symbols[Math.floor(Math.random() * symbols.length)];
 
-        let slot1, slot2, slot3;
+        let slots = new Array(10).fill(null);
+        for (let i = 0; i < 10; i++) {
+            await new Promise(resolve => setTimeout(async () => {
+                slots[i] = spinSlots();
+                await msg.edit(`| ${slots.map(s => s || loadingIcon).join(' | ')} |
+🎰 Đang quay máy đánh bạc với ${betAmount} coin...`);
+                resolve();
+            }, 800));
+        }
 
-        await new Promise(resolve => setTimeout(async () => {
-            slot1 = spinSlots();
-            await msg.edit(`| ${slot1} | ${loadingIcon} | ${loadingIcon} |\n🎰 Đang quay máy đánh bạc với ${betAmount} coin...`);
-            resolve();
-        }, 1500));
+        // Đếm số lượng biểu tượng trùng nhau
+        let counts = {};
+        slots.forEach(symbol => counts[symbol] = (counts[symbol] || 0) + 1);
+        let maxMatches = Math.max(...Object.values(counts));
 
-        await new Promise(resolve => setTimeout(async () => {
-            slot2 = spinSlots();
-            await msg.edit(`| ${slot1} | ${slot2} | ${loadingIcon} |\n🎰 Đang quay máy đánh bạc với ${betAmount} coin...`);
-            resolve();
-        }, 1500));
-
-        await new Promise(resolve => setTimeout(async () => {
-            slot3 = spinSlots();
-            await msg.edit(`| ${slot1} | ${slot2} | ${slot3} |\n🎰 Đang quay máy đánh bạc với ${betAmount} coin`);
-            resolve();
-        }, 1500));
-
-        // Xử lý kết quả
+        // Xử lý kết quả dựa trên số biểu tượng trùng nhau
+        let winnings = 0;
+        if (maxMatches === 2) winnings = Math.floor(betAmount / 4); // Hoàn 25%
+        else if (maxMatches === 3) winnings = Math.floor(betAmount / 2); // Hoàn 50%
+        else if (maxMatches === 4) winnings = betAmount; // Hoàn 100%
+        else if (maxMatches === 5) winnings = betAmount * 2; // Thắng x2
+        else if (maxMatches === 6) winnings = betAmount * 3; // Thắng x3
+        else if (maxMatches === 7) winnings = betAmount * 4; // Thắng x4
+        else if (maxMatches === 8) winnings = betAmount * 5; // Thắng x5
+        else if (maxMatches === 9) winnings = betAmount * 10; // Thắng x10
+        else if (maxMatches === 10) winnings = betAmount * 100; // Thắng x100
+        
         let resultMessage;
-        if (slot1 === slot2 && slot2 === slot3) {
-            // Trùng cả 3 biểu tượng → x5 tiền cược
-            let winnings = betAmount * 5;
+        if (winnings > 0) {
             user.money += winnings;
             user.wins += 1;
-            resultMessage = `🎉 **JACKPOT!** Bạn thắng ${winnings} coin! 🎰🔥`;
-        } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
-            // Trùng 2 biểu tượng → Nhận lại 50% tiền cược
-            let refund = Math.floor(betAmount / 2);
-            user.money -= (betAmount - refund); // Chỉ trừ 50% thay vì toàn bộ
-            resultMessage = `✨ Bạn trúng 2 biểu tượng! Nhận lại ${refund} coin.`;
+            resultMessage = `🎉 Bạn trúng ${maxMatches} biểu tượng giống nhau! Thắng ${winnings} coin! 🎰🔥`;
         } else {
-            // Không trùng → Mất toàn bộ tiền cược
             user.money -= betAmount;
             user.losses += 1;
             resultMessage = `❌ Bạn thua ${betAmount} coin!`;
         }
+
         // Lưu kết quả vào database
         await user.save();
 
         // Gửi kết quả
-        await msg.edit(`| ${slot1} | ${slot2} | ${slot3} |\n${resultMessage}\n💰 **Số tiền còn lại:** ${user.money} coin`);
+        await msg.edit(`| ${slots.join(' | ')} |
+${resultMessage}
+💰 **Số tiền còn lại:** ${user.money} coin`);
     }
 };
