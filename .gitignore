@@ -1,0 +1,8 @@
+# Bỏ qua thư mục node_modules
+node_modules/
+
+# Bỏ qua file .env (chứa biến môi trường, API keys...)
+.env
+.env.local
+.env.development
+.env.production
