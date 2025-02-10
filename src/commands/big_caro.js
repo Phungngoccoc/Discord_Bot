@@ -18,7 +18,7 @@ module.exports = {
         const players = { X: message.author, O: null };
 
         const embed = new EmbedBuilder()
-            .setTitle("🎮 Cờ caro 5x5")
+            .setTitle("🎮 <a:emoji_11:1107231869063405649>  Cờ caro 5x5")
             .setDescription(`Lượt đi của: ${players.X.tag} (X)`)
             .setColor(0x00AE86);
 
@@ -55,7 +55,7 @@ module.exports = {
                 }
                 return i.user.id === players.X.id || i.user.id === players.O?.id;
             },
-            time: 60000
+            time: 360000
         });
 
         collector.on('collect', async (buttonInteraction) => {
