@@ -71,6 +71,7 @@ module.exports = {
         } else if (winnings === 0) {
             resultMessage = `🎉 Bạn trúng ${maxMatches} biểu tượng giống nhau! Hoàn lại ${betAmount} coin! 🎰🔥`;
         } else {
+            betAmount = Math.ceil(betAmount);
             user.money -= betAmount;
             user.losses += 1;
             resultMessage = `❌ Bạn thua ${winnings} coin!`;

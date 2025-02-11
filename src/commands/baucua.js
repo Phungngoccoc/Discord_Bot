@@ -9,6 +9,14 @@ module.exports = {
         const choices = ["bầu", "cua", "tôm", "cá", "gà", "nai"];
         const match = message.content.match(/\d+/);
         let betAmount = match ? parseInt(match[0]) : 1;
+        const emojiMap = {
+            "bầu": "🍐",
+            "cua": "🦀",
+            "tôm": "🦐",
+            "cá": "🐟",
+            "gà": "🐓",
+            "nai": "🦌"
+        };
 
         if (isNaN(betAmount) || betAmount <= 0) return message.reply("❌ Vui lòng nhập số tiền cược hợp lệ.");
         if (betAmount > 200000) return message.reply("❌ Số tiền cược tối đa là 200,000 xu.");
@@ -25,10 +33,11 @@ module.exports = {
 
         const choice = message.content.match(/\b(bầu|cua|tôm|cá|gà|nai)\b/i);
         let betChoice = choice ? choice[0] : null;
-        if (!choices.includes(betChoice.toLowerCase())) {
+        if (betChoice !== null && !choices.includes(betChoice ?? betChoice.toLowerCase())) {
+            return message.reply("❌ Bạn chỉ có thể đặt cược vào: **Bầu, Cua, Tôm, Cá, Gà, Nai**.");
+        } else if (betChoice === null) {
             return message.reply("❌ Bạn chỉ có thể đặt cược vào: **Bầu, Cua, Tôm, Cá, Gà, Nai**.");
         }
-
         if (isNaN(betAmount) || betAmount <= 0) {
             return message.reply("❌ Số tiền cược không hợp lệ!");
         }
@@ -41,19 +50,21 @@ module.exports = {
         let results = [
             choices[Math.floor(Math.random() * choices.length)],
             choices[Math.floor(Math.random() * choices.length)],
+            choices[Math.floor(Math.random() * choices.length)],
+            choices[Math.floor(Math.random() * choices.length)],
             choices[Math.floor(Math.random() * choices.length)]
         ];
-
+        let resultsWithEmoji = results.map(item => emojiMap[item]);
         // Tính tiền thắng/thua
         let winCount = results.filter(result => result === betChoice).length;
         let winAmount = betAmount * winCount;
 
         if (winCount > 0) {
             user.money += winAmount;
-            message.reply(`🎉 **Kết quả:** ${results.join(" - ")}\nBạn đặt **${betChoice}** và thắng **${winAmount} xu**!`);
+            message.reply(`🎉 **Kết quả:** ${resultsWithEmoji.join(" - ")}\nBạn đặt **${betChoice}** và thắng **${winAmount} xu**!`);
         } else {
             user.money -= betAmount;
-            message.reply(`😢 **Kết quả:** ${results.join(" - ")}\nBạn đặt **${betChoice}** nhưng không trúng, mất **${betAmount} xu**.`);
+            message.reply(`😢 **Kết quả:** ${resultsWithEmoji.join(" - ")}\nBạn đặt **${betChoice}** nhưng không trúng, mất **${betAmount} xu**.`);
         }
     }
 };

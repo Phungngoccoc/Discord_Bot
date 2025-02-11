@@ -66,14 +66,14 @@ module.exports = {
                 console.error(`[ERROR] Người chơi ${currentPlayer} chưa được xác định.`);
                 return buttonInteraction.reply({
                     content: "⚠ Lỗi: Người chơi chưa được xác định!",
-                    ephemeral: true
+                    flags: 64
                 });
             }
 
             if (buttonInteraction.user.id !== players[currentPlayer].id) {
                 return buttonInteraction.reply({
                     content: "❌ Không phải lượt của bạn!",
-                    ephemeral: true
+                    flags: 64
                 });
             }
 
