@@ -1,14 +1,14 @@
 const User = require('../model/userModel'); // Giả sử bạn có model User trong MongoDB
 
 module.exports = {
-    name: 'slot',
+    name: 's',
     description: '🎰 Chơi máy đánh bạc với hiệu ứng quay và đặt cược!',
     execute: async (message) => {
         if (message.content.includes('help')) {
             return message.reply(`📜 **Hướng dẫn chơi Slot** 📜\n\n🎰 **Cách chơi:**\n- Nhập lệnh \`!slot <số tiền cược>\` để quay máy đánh bạc.\n- Hệ thống sẽ quay 10 ô slot với các biểu tượng ngẫu nhiên.\n\n💰 **Tỷ lệ thắng:**\n- 2 biểu tượng trùng: Hoàn lại 25% tiền cược.\n- 3 biểu tượng trùng: Hoàn lại 50% tiền cược.\n- 4 biểu tượng trùng: Hoàn lại 100% tiền cược.\n- 5 biểu tượng trùng: Thắng x2 tiền cược.\n- 6 biểu tượng trùng: Thắng x3 tiền cược.\n- 7 biểu tượng trùng: Thắng x4 tiền cược.\n- 8 biểu tượng trùng: Thắng x5 tiền cược.\n- 9 biểu tượng trùng: Thắng x10 tiền cược.\n- 10 biểu tượng trùng: Thắng x100 tiền cược.\n\nChúc bạn may mắn! 🍀`);
         }
 
-        const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇', '🍎', '💎'];
+        const symbols = ['<:slots1:1338720715054256168>', '<:slots2:1338720717323239494>', '<:slots6:1338720727322595498>', '<:slots5:1338720724864602253>', '<:slots3:1338720719345029164>', '<:slots4:1338721143267262524>'];
 
         // Lấy số tiền cược từ tin nhắn
         const match = message.content.match(/\d+/);
@@ -53,25 +53,27 @@ module.exports = {
 
         // Xử lý kết quả dựa trên số biểu tượng trùng nhau
         let winnings = 0;
-        if (maxMatches === 2) winnings = Math.floor(betAmount / 4); // Hoàn 25%
-        else if (maxMatches === 3) winnings = Math.floor(betAmount / 2); // Hoàn 50%
-        else if (maxMatches === 4) winnings = betAmount; // Hoàn 100%
-        else if (maxMatches === 5) winnings = betAmount * 2; // Thắng x2
-        else if (maxMatches === 6) winnings = betAmount * 3; // Thắng x3
-        else if (maxMatches === 7) winnings = betAmount * 4; // Thắng x4
-        else if (maxMatches === 8) winnings = betAmount * 5; // Thắng x5
-        else if (maxMatches === 9) winnings = betAmount * 10; // Thắng x10
+        if (maxMatches === 2) winnings = -betAmount; // 0
+        else if (maxMatches === 3) winnings = -betAmount;  // 0
+        else if (maxMatches === 4) winnings = - betAmount / 2; // Hoàn 50%
+        else if (maxMatches === 5) winnings = betAmount; // Thắng 
+        else if (maxMatches === 6) winnings = betAmount * 2; // Thắng x2
+        else if (maxMatches === 7) winnings = betAmount * 5; // Thắng x5
+        else if (maxMatches === 8) winnings = betAmount * 10; // Thắng x10
+        else if (maxMatches === 9) winnings = betAmount * 50; // Thắng x50
         else if (maxMatches === 10) winnings = betAmount * 100; // Thắng x100
-        
+
         let resultMessage;
         if (winnings > 0) {
             user.money += winnings;
             user.wins += 1;
             resultMessage = `🎉 Bạn trúng ${maxMatches} biểu tượng giống nhau! Thắng ${winnings} coin! 🎰🔥`;
+        } else if (winnings === 0) {
+            resultMessage = `🎉 Bạn trúng ${maxMatches} biểu tượng giống nhau! Hoàn lại ${betAmount} coin! 🎰🔥`;
         } else {
             user.money -= betAmount;
             user.losses += 1;
-            resultMessage = `❌ Bạn thua ${betAmount} coin!`;
+            resultMessage = `❌ Bạn thua ${winnings} coin!`;
         }
 
         // Lưu kết quả vào database

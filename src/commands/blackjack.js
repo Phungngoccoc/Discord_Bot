@@ -21,34 +21,56 @@ module.exports = {
         const match = message.content.match(/\d+/);
         let betAmount = match ? parseInt(match[0]) : 1;
 
-        if (isNaN(betAmount) || betAmount <= 0) {
-            return message.reply("❌ Vui lòng nhập số tiền cược hợp lệ. Ví dụ: `!bj 1000`.");
-        }
-        if (betAmount > 200000) {
-            return message.reply("❌ Số tiền cược tối đa là 200,000 xu.");
-        }
+        if (isNaN(betAmount) || betAmount <= 0) return message.reply("❌ Vui lòng nhập số tiền cược hợp lệ.");
+        if (betAmount > 200000) return message.reply("❌ Số tiền cược tối đa là 200,000 xu.");
 
         let user = await getUserData(userId);
         if (!user) {
             user = { money: 1000 };
             await updateUserData(userId, { money: user.money });
         }
-        if (betAmount > user.money) {
-            return message.reply("❌ Bạn không đủ tiền để cược số tiền này.");
-        }
+        if (betAmount > user.money) return message.reply("❌ Bạn không đủ tiền để cược số tiền này.");
 
         user.money -= betAmount;
         await updateUserData(userId, { money: user.money });
 
-        const getCard = () => Math.floor(Math.random() * 11) + 1;
+        // Tạo bộ bài 52 lá
+        const createDeck = () => {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            let deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({ value, suit });
+                }
+            }
+            return deck.sort(() => Math.random() - 0.5); // Trộn bài ngẫu nhiên
+        };
+
+        let deck = createDeck();
+
+        const drawCard = () => deck.pop(); // Rút một lá từ bộ bài
+
+        const getCardValue = (card) => {
+            if (['J', 'Q', 'K'].includes(card.value)) return 10;
+            if (card.value === 'A') return 11; // Mặc định A là 11, sẽ tính lại sau
+            return parseInt(card.value);
+        };
+
         const calculateScore = (cards) => {
-            let total = cards.reduce((a, b) => a + b, 0);
-            if (cards.includes(1) && total + 10 <= 21) total += 10;
+            let total = cards.reduce((sum, card) => sum + getCardValue(card), 0);
+            let aceCount = cards.filter(card => card.value === 'A').length;
+
+            while (total > 21 && aceCount > 0) {
+                total -= 10; // Chuyển A từ 11 thành 1
+                aceCount--;
+            }
+
             return total;
         };
 
-        let playerCards = [getCard(), getCard()];
-        let botCards = [getCard(), getCard()];
+        let playerCards = [drawCard(), drawCard()];
+        let botCards = [drawCard(), drawCard()];
         let playerScore = calculateScore(playerCards);
         let botScore = calculateScore(botCards);
 
@@ -57,20 +79,14 @@ module.exports = {
             new ButtonBuilder().setCustomId('stand').setLabel('🛑 Dừng').setStyle(ButtonStyle.Danger)
         );
 
-        const cardToEmoji = (cardValue) => {
-            const cardEmojis = {
-                1: '<:1_:1338480816723988511>', 2: '<:2_:1338480819597082745>', 3: '<:3_:1338480822029652089>', 4: '<:4_:1338480824005431348> ', 5: '<:5_:1338480827176325120>', 6: '<:6_:1338480835313139762>',
-                7: '<:7_:1338480838089904202>', 8: '<:8_:1338480840681984012>', 9: '<:9_:1338480844184227931>', 10: '<:10:1338480847380283393> ', 11: '<:1_:1338480816723988511> ', 0: '<:backcard:1338483881506111549>'
-            };
-            return cardEmojis[cardValue] || '🎴'; // Default to a generic card emoji if not found
-        };
+        const cardToEmoji = (card) => `**${card.value}${card.suit}**`;
 
         const embed = new EmbedBuilder()
             .setColor('#0099ff')
             .setAuthor({ name: `${message.author.username} cược ${betAmount} xu`, iconURL: message.author.displayAvatarURL() })
             .addFields(
                 { name: `👤 ${message.author.username} [${playerScore}]`, value: `${playerCards.map(cardToEmoji).join(' ')}`, inline: true },
-                { name: `🤖 Dealer **[${botCards[0]}+?]**`, value: `${cardToEmoji(botCards[0])} ${cardToEmoji(0)}`, inline: true }
+                { name: `🤖 Dealer **[? + ?]**`, value: `${cardToEmoji(botCards[0])} ❓`, inline: true }
             );
 
         let msg = await message.reply({ embeds: [embed], components: [row] });
@@ -80,7 +96,7 @@ module.exports = {
 
         collector.on('collect', async (interaction) => {
             if (interaction.customId === 'hit') {
-                let newCard = getCard();
+                let newCard = drawCard();
                 playerCards.push(newCard);
                 playerScore = calculateScore(playerCards);
 
@@ -94,7 +110,7 @@ module.exports = {
                         .setAuthor({ name: `${message.author.username} cược ${betAmount} xu`, iconURL: message.author.displayAvatarURL() })
                         .addFields(
                             { name: `👤 ${message.author.username} [${playerScore}]`, value: `${playerCards.map(cardToEmoji).join(' ')}`, inline: true },
-                            { name: `🤖 Dealer **[${botCards[0]}+?]**`, value: `${cardToEmoji(botCards[0])} ${cardToEmoji(0)}`, inline: true }
+                            { name: `🤖 Dealer **[? + ?]**`, value: `${cardToEmoji(botCards[0])} ❓`, inline: true }
                         )
                     ],
                     components: [row]
@@ -107,15 +123,13 @@ module.exports = {
         });
 
         async function processGameEnd(interaction) {
-            while (botScore < 16 || (botScore < playerScore && playerScore <= 21 && botCards.length < 5)) {
-                botCards.push(getCard());
+            while (botScore < 16 || (botScore < playerScore && playerScore <= 21 && botCards.length < 4)) {
+                botCards.push(drawCard());
                 botScore = calculateScore(botCards);
             }
-
             const isPlayerFiveCard = playerCards.length === 5 && playerScore <= 21;
             const isBotFiveCard = botCards.length === 5 && botScore <= 21;
             let messageText = "";
-
             if (isPlayerFiveCard && !isBotFiveCard) {
                 user.money += betAmount * 3;
                 messageText = `🎉 **Ngũ linh!** Bạn thắng gấp 3 lần: **${betAmount * 3} xu**!`;
@@ -129,14 +143,20 @@ module.exports = {
                     user.money += betAmount;
                     messageText = `🤝 **Cả hai có Ngũ linh!** Hòa, bạn nhận lại **${betAmount} xu**.`;
                 }
-            } else if (playerScore > 21) {
+            } else if (isBotFiveCard && !isPlayerFiveCard) {
+                messageText = `😢 Dealer có **Ngũ linh**! Bạn thua **${betAmount} xu**.`;
+
+            } else if (playerScore > 21 && botScore <= 21 && botScore >= 16) {
                 messageText = `Bạn đã thua **${betAmount} xu**.`;
-            } else if (botScore > 21 || playerScore > botScore) {
-                user.money += betAmount * 2;
-                messageText = `🎉 Bạn thắng **${betAmount * 2} xu**!`;
             } else if (playerScore === botScore) {
                 user.money += betAmount;
                 messageText = `🤝 Hòa! Bạn nhận lại **${betAmount} xu**.`;
+            } else if (playerScore > 21 && botScore > 21) {
+                user.money += betAmount;
+                messageText = `Hòa, bạn nhận lại **${betAmount} xu**.`;
+            } else if (playerScore <= 21 && botScore > 21) {
+                user.money += betAmount * 2;
+                messageText = `Bạn đã thắng **${betAmount} xu**.`;
             } else {
                 messageText = `Bạn đã thua **${betAmount} xu**.`;
             }
