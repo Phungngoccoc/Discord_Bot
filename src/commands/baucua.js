@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const { getUserData, updateUserData } = require('../service/userService');
 
 module.exports = {
-    name: "bc",
+    name: "bc1",
     description: "Chơi Bầu Cua bằng cách đặt cược vào một con vật!",
     execute: async (message) => {
         const userId = message.author.id;
