@@ -9,6 +9,21 @@ const commands = [
     {
         name: "test",
         description: "Kiểm tra bot có nhận lệnh Slash Command hay không!"
+    },
+    {
+        name: "phatnhac",
+        description: "Phát nhạc từ YouTube",
+        options: [
+            {
+                type: 3,
+                name: "url",
+                description: "URL của video YouTube",
+                required: true,
+            }
+        ]
+    }, {
+        name: "chess",
+        description: "Chơi cờ vua với bạn bè!",
     }
 ];
 
