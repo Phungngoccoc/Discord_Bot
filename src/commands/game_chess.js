@@ -1,112 +1,75 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, TextInputBuilder, ModalBuilder } = require('discord.js');
-const axios = require('axios');
+const { Chess } = require("chess.js");
 
-const LICHESS_TOKEN = process.env.LICHESS_API_KEY;
+const games = new Map(); // Lưu trữ ván cờ theo userId
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('chess')
-        .setDescription('Chơi cờ vua với AI trên Discord'),
+    name: "chess",
+    description: "Chơi cờ vua với bot",
 
-    async execute(interaction) {
+    async execute(message) {
+        const userId = message.author.id;
+        let game = games.get(userId);
+
+        const content = message.content.trim(); // Lấy nội dung tin nhắn
+        const args = content.split(/\s+/); // Tách chuỗi theo dấu cách
+        const move = args[1] || ""; // Lấy nước đi từ tham số thứ hai
+
+        // Nếu người chơi chỉ nhập "!chess" -> bắt đầu ván cờ mới
+        if (!game) {
+            game = new Chess();
+            games.set(userId, game);
+            return message.reply(`♟️ **Ván cờ mới đã bắt đầu!** Hãy nhập nước đi (VD: \`kchess e2e4\`)\n${renderBoard(game)}`);
+        }
+
+        // Nếu người chơi chỉ nhập "!chess", hiển thị bàn cờ
+        if (!move) {
+            return message.reply(`♟️ **Bàn cờ hiện tại:**\n${renderBoard(game)}`);
+        }
+
+        // Xử lý di chuyển quân cờ
         try {
-            // Tạo ván đấu với AI
-            const response = await axios.post(
-                'https://lichess.org/api/challenge/ai',
-                { level: 3, rated: false, clock: { limit: 300, increment: 0 } },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${LICHESS_TOKEN}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
+            const result = game.move(move, { sloppy: true });
 
-            const gameId = response.data.id;
-            const gameUrl = `https://lichess.org/${gameId}`;
-            const boardImg = `https://lichess.org/game/export/png/${gameId}`; // Ảnh bàn cờ
-
-            // Embed hiển thị bàn cờ
-            const embed = new EmbedBuilder()
-                .setColor('#0099ff')
-                .setTitle('♟️ Trận đấu cờ vua với AI')
-                .setDescription(`Bạn đang đấu với AI!  
-                👉 [Nhấn vào đây để xem trên Lichess](${gameUrl})`)
-                .setImage(boardImg)
-                .setTimestamp();
-
-            // Gửi nút nhập nước đi
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setCustomId(`make_move_${gameId}`)
-                    .setLabel('Nhập nước đi')
-                    .setStyle(ButtonStyle.Primary)
-            );
-
-            await interaction.reply({ embeds: [embed], components: [row] });
-        } catch (error) {
-            console.error('Lỗi tạo ván cờ:', error);
-            await interaction.reply('⚠️ Lỗi khi tạo trận đấu với AI! Hãy thử lại sau.');
-        }
-    },
-
-    async handleButton(interaction) {
-        if (interaction.customId.startsWith('make_move_')) {
-            const gameId = interaction.customId.replace('make_move_', '');
-
-            // Hiển thị modal để nhập nước đi
-            const modal = new ModalBuilder()
-                .setCustomId(`submit_move_${gameId}`)
-                .setTitle('Nhập nước đi')
-                .addComponents(
-                    new ActionRowBuilder().addComponents(
-                        new TextInputBuilder()
-                            .setCustomId('move_input')
-                            .setLabel('Nhập nước đi (ví dụ: e2e4)')
-                            .setStyle('Short')
-                    )
-                );
-
-            await interaction.showModal(modal);
-        }
-    },
-
-    async handleModal(interaction) {
-        if (interaction.customId.startsWith('submit_move_')) {
-            const gameId = interaction.customId.replace('submit_move_', '');
-            const move = interaction.fields.getTextInputValue('move_input');
-
-            try {
-                // Gửi nước đi lên Lichess
-                await axios.post(
-                    `https://lichess.org/api/board/game/${gameId}/move/${move}`,
-                    {},
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${LICHESS_TOKEN}`,
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                );
-
-                // Cập nhật ảnh bàn cờ
-                const boardImg = `https://lichess.org/game/export/png/${gameId}`;
-                const gameUrl = `https://lichess.org/${gameId}`;
-
-                const embed = new EmbedBuilder()
-                    .setColor('#0099ff')
-                    .setTitle('♟️ Trận đấu cờ vua với AI')
-                    .setDescription(`Bạn đang đấu với AI!  
-                    👉 [Nhấn vào đây để xem trên Lichess](${gameUrl})`)
-                    .setImage(boardImg)
-                    .setTimestamp();
-
-                await interaction.reply({ embeds: [embed] });
-            } catch (error) {
-                console.error('Lỗi khi thực hiện nước đi:', error);
-                await interaction.reply('⚠️ Nước đi không hợp lệ hoặc có lỗi xảy ra!');
+            if (!result) {
+                return message.reply("⚠️ Nước đi không hợp lệ! Hãy thử lại.");
             }
+
+            let response = `✅ Bạn đã đi: **${move}**`;
+            let endMessage = "";
+
+            if (game.isCheckmate()) {
+                endMessage = "\n🚨 Chiếu hết! Bạn thắng!";
+                games.delete(userId);
+            } else if (game.isDraw()) {
+                endMessage = "\n⚖️ Ván cờ hòa!";
+                games.delete(userId);
+            }
+
+            return message.reply(`${response}${endMessage}\n${renderBoard(game)}`);
+
+        } catch (error) {
+            return message.reply("⚠️ Lỗi: Nước đi không hợp lệ. Hãy kiểm tra lại!");
         }
-    },
+    }
 };
+
+function renderBoard(game) {
+    const board = game.board();
+    let display = "";
+    display += "       a      b    c     d     e     f      g     h\n\n";
+
+    const emojiMap = {
+        P: "<:wp:1339260409915510916>", N: "<:wk:1339260415519096853>", B: "<:wb:1339260418006454374>", R: "<:wr:1339260404995723315>", Q: "<:wq:1339260407289872485>", K: "<:wki:1339260412293677147>",
+        p: "<:bp:1339260425732362321>", n: "<:bk:1339260430362873876>", b: "<:bb:1339260433239904307>", r: "<:br:1339260420568911944>", q: "<:bq:1339260423546867824>", k: "<:bki:1339260428395479050>"
+    };
+
+    for (let i = 0; i < board.length; i++) {
+        display += `${8 - i}    `;
+        display += board[i].map(cell => cell ? emojiMap[cell.color === "w" ? cell.type.toUpperCase() : cell.type] : "⬜").join(" ");
+        display += `    ${8 - i}\n\n`;
+    }
+
+    display += "       a      b    c     d     e     f      g     h";
+
+    return display;
+}
