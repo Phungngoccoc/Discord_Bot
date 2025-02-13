@@ -13,7 +13,7 @@ module.exports = async (client, interaction) => {
             console.log(`[SUCCESS] Lệnh /${interaction.commandName} thực thi thành công!`);
         } catch (error) {
             console.error(`❌ Lỗi khi chạy lệnh /${interaction.commandName}:`, error);
-            await interaction.reply({ content: "❌ Đã xảy ra lỗi!", ephemeral: true });
+            await interaction.reply({ content: "❌ Đã xảy ra lỗi!", flags: 64 });
         }
     }
 
@@ -25,7 +25,7 @@ module.exports = async (client, interaction) => {
     //         await command.handleButton(interaction);
     //     } else {
     //         console.error(`[ERROR] Không tìm thấy hoặc chưa định nghĩa handleButton.`);
-    //         await interaction.reply({ content: "❌ Lỗi khi xử lý nút!", ephemeral: true });
+    //         await interaction.reply({ content: "❌ Lỗi khi xử lý nút!", flags: 64 });
     //     }
     // }
 
@@ -37,7 +37,7 @@ module.exports = async (client, interaction) => {
     //         await command.handleModal(interaction);
     //     } else {
     //         console.error(`[ERROR] Không tìm thấy hoặc chưa định nghĩa handleModal.`);
-    //         await interaction.reply({ content: "❌ Lỗi khi xử lý form nhập!", ephemeral: true });
+    //         await interaction.reply({ content: "❌ Lỗi khi xử lý form nhập!", flags: 64 });
     //     }
     // }
 };
