@@ -2,11 +2,19 @@ const Discord = require("discord.js");
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js");
 const { getUserData, updateUserData } = require("../service/userService");
 
+let gameRunning = false; // Biến kiểm tra trạng thái game
+
 module.exports = {
     name: "tx",
     description: "Chơi Tài Xỉu bằng cách đặt cược!",
     execute: async (message) => {
         try {
+            if (gameRunning) {
+                return message.reply("⚠️ Hiện tại đang có một ván Tài Xỉu diễn ra. Vui lòng chờ kết thúc trước khi bắt đầu ván mới!");
+            }
+
+            gameRunning = true; // Đánh dấu game đang chạy
+
             const embed = new Discord.EmbedBuilder()
                 .setColor("#ffcc00")
                 .setTitle("🎲 Chơi Tài Xỉu 🎲")
@@ -21,15 +29,23 @@ module.exports = {
             const msg = await message.channel.send({ embeds: [embed], components: [row] });
 
             const bets = new Map();
+            const userChoices = new Map();
             const filter = (interaction) => interaction.isButton() && interaction.message.id === msg.id;
             const collector = message.channel.createMessageComponentCollector({ filter, time: 15000 });
 
             collector.on("collect", async (interaction) => {
                 try {
+                    const userId = interaction.user.id;
+
+                    if (userChoices.has(userId)) {
+                        return interaction.reply({ content: "⚠️ Bạn đã đặt cược rồi, không thể đặt tiếp!", ephemeral: true });
+                    }
+
                     const betChoice = interaction.customId === "bet_tai" ? "Tài" : "Xỉu";
+                    userChoices.set(userId, betChoice);
 
                     const modal = new ModalBuilder()
-                        .setCustomId(`bet_modal_${interaction.user.id}`)
+                        .setCustomId(`bet_modal_${userId}`)
                         .setTitle(`Đặt cược vào ${betChoice}`);
 
                     const input = new TextInputBuilder()
@@ -55,16 +71,17 @@ module.exports = {
                     const betAmount = parseInt(interaction.fields.getTextInputValue("bet_amount"));
 
                     if (isNaN(betAmount) || betAmount <= 0) {
-                        return interaction.reply({ content: "⚠️ Số tiền cược không hợp lệ!", flags: 64 });
+                        return interaction.reply({ content: "⚠️ Số tiền cược không hợp lệ!", ephemeral: true });
                     }
 
                     const userData = await getUserData(userId);
                     if (!userData || isNaN(userData.money) || userData.money < betAmount) {
-                        return interaction.reply({ content: "❌ Bạn không có đủ tiền để đặt cược!", flags: 64 });
+                        return interaction.reply({ content: "❌ Bạn không có đủ tiền để đặt cược!", ephemeral: true });
                     }
 
-                    bets.set(userId, { choice: interaction.customId.includes("bet_tai") ? "Tài" : "Xỉu", amount: betAmount });
-                    await interaction.reply({ content: `✅ Bạn đã đặt cược **${betAmount}** xu vào **${bets.get(userId).choice}**!`, flags: 64 });
+                    const choice = userChoices.get(userId);
+                    bets.set(userId, { choice, amount: betAmount });
+                    await interaction.reply({ content: `✅ Bạn đã đặt cược **${betAmount}** xu vào **${choice}**!`, ephemeral: true });
                 } catch (error) {
                     console.error("Lỗi khi xử lý đặt cược:", error);
                 }
@@ -81,15 +98,11 @@ module.exports = {
                     const rollingMessage = await message.channel.send({ embeds: [rollingEmbed] });
                     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-                    // Mảng emoji tương ứng với từng số trên xúc xắc
                     const diceEmojis = ["<:tx1:1339511294453354530> ", "<:tx2:1339511297338769448>", "<:tx3:1339511299368816640>", "<:tx4:1339511301617094657>", "<:tx5:1339511305723318313>", "<:tx6:1339511308554600508>"];
-
-                    // Tung xúc xắc (3 xúc xắc)
                     const dice = Array.from({ length: 3 }, () => Math.floor(Math.random() * 6) + 1);
                     const total = dice.reduce((a, b) => a + b, 0);
                     const result = total >= 10 ? "Tài" : "Xỉu";
 
-                    // Hiển thị emoji xúc xắc
                     const diceDisplay = dice.map(num => diceEmojis[num - 1]).join(" ");
 
                     const resultEmbed = new Discord.EmbedBuilder()
@@ -100,7 +113,6 @@ module.exports = {
 
                     await rollingMessage.edit({ embeds: [resultEmbed] });
 
-                    // Xử lý thắng/thua
                     let outcomeMessage = "";
                     for (const [userId, bet] of bets) {
                         const userData = await getUserData(userId);
@@ -120,10 +132,13 @@ module.exports = {
                     }
                 } catch (error) {
                     console.error("Lỗi khi xử lý kết quả trò chơi:", error);
+                } finally {
+                    gameRunning = false; // Kết thúc game
                 }
             });
         } catch (error) {
             console.error("Lỗi khi chạy lệnh tài xỉu:", error);
+            gameRunning = false;
         }
     }
 };
