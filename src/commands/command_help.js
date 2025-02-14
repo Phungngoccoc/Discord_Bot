@@ -11,12 +11,12 @@ module.exports = {
             .addFields(
                 {
                     name: "💰 Tiền",
-                    value: "``money give``",
+                    value: "``money`` ``rob`` ``crime`` ``work`` ``give``",
                     inline: false
                 },
                 {
                     name: "🎲 Mini games",
-                    value: "``bc`` ``caro`` ``bigcaro`` ``bj`` ``duel`` ``guess`` ``slot`` ``treasure``",
+                    value: "``bc`` ``caro`` ``bigcaro`` ``bj`` ``duel`` ``guess`` ``slot`` ``treasure`` ``chess`` ``mine`` ``quiz`` ",
                     inline: false
                 }
             );

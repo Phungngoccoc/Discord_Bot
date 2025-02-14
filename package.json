@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js",
+    "bot": "nodemon ./src/index.js",
+    "server": "nodemon ./src/server.js",
     "register": "node ./src/utils/registerCommands.js"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "chess.js": "^1.0.0",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "ffmpeg-static": "^5.2.0",
     "googleapis": "^144.0.0",
     "mongoose": "^8.10.0",

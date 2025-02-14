@@ -11,7 +11,6 @@ module.exports = (client, message) => {
     // Lấy đường dẫn chính xác đến thư mục `commands`
     const commandsPath = path.join(__dirname, "../commands");
 
-    // Kiểm tra nếu thư mục `commands` không tồn tại
     if (!fs.existsSync(commandsPath)) {
         console.error("❌ Thư mục commands không tồn tại!");
         return;
@@ -26,6 +25,11 @@ module.exports = (client, message) => {
     }
 
     if (commands.has(commandName)) {
-        commands.get(commandName).execute(message);
+        try {
+            commands.get(commandName).execute(message, args); // ✅ Truyền thêm `args`
+        } catch (error) {
+            console.error(`❌ Lỗi khi thực hiện lệnh ${commandName}:`, error);
+            message.reply("⚠ Đã xảy ra lỗi khi thực hiện lệnh.");
+        }
     }
 };
