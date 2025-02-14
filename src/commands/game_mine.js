@@ -18,7 +18,7 @@ module.exports = {
 
         // if (user.lastMine && now - user.lastMine < cooldown) {
         //     const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
-        //     return message.reply(`⏳ Bạn phải chờ ${remainingTime} phút nữa mới có thể đào tiếp!`);
+        //     return message.reply(`⏳ Bạn phải chờ ${remainingTime} phút nữa mới có thể đào tiếp!`); a
         // }
 
         // Cập nhật thời gian đào cuối cùng
