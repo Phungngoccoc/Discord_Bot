@@ -22,7 +22,7 @@ module.exports = {
         let betAmount = match ? parseInt(match[0]) : 1;
 
         if (isNaN(betAmount) || betAmount <= 0) return message.reply("❌ Vui lòng nhập số tiền cược hợp lệ.");
-        if (betAmount > 200000) return message.reply("❌ Số tiền cược tối đa là 200,000 xu.");
+        if (betAmount > 200000000000000000000) return message.reply("❌ Số tiền cược tối đa là 200,000 xu.");
 
         let user = await getUserData(userId);
         if (!user) {

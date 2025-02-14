@@ -16,10 +16,10 @@ module.exports = {
         const now = Date.now();
         const cooldown = 30 * 60 * 1000; // 30 phút
 
-        if (user.lastMine && now - user.lastMine < cooldown) {
-            const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
-            return message.reply(`⏳ Bạn phải chờ ${remainingTime} phút nữa mới có thể đào tiếp!`);
-        }
+        // if (user.lastMine && now - user.lastMine < cooldown) {
+        //     const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
+        //     return message.reply(`⏳ Bạn phải chờ ${remainingTime} phút nữa mới có thể đào tiếp!`);
+        // }
 
         // Cập nhật thời gian đào cuối cùng
         user.lastMine = now;
