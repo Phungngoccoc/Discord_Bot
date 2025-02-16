@@ -17,6 +17,7 @@ module.exports = {
             });
             await farm.save();
         }
+
         if (args[0] === "help") {
             const helpEmbed = new EmbedBuilder()
                 .setColor("#4CAF50")
@@ -35,16 +36,21 @@ module.exports = {
 
             return message.reply({ embeds: [helpEmbed] });
         }
+
         let landGrid = Array(farm.landSlots).fill("🟫"); // Mặc định là đất trống
+        let cropCount = {}; // Để nhóm cây trồng theo loại và trạng thái
         const currentTime = Date.now();
 
         farm.crops.forEach((crop, index) => {
             if (!crop) return;
 
             const elapsedTime = currentTime - new Date(crop.plantedAt).getTime();
-            const halfGrowthTime = crop.harvestTime / 2;
-            const fullGrowthTime = crop.harvestTime;
-            const damageTime = crop.harvestTime + 60 * 60 * 1000; // Nếu quá 2 lần thời gian thu hoạch thì bị sâu
+            const halfGrowthTime = crops[crop.name].harvestTime / 2;
+            const fullGrowthTime = crops[crop.name].harvestTime;
+            const damageTime = fullGrowthTime + 60 * 60 * 1000; // Nếu quá 1 tiếng sau khi trưởng thành thì bị sâu
+
+            let timeLeft = fullGrowthTime - elapsedTime;
+            let status = `🌱 Đang phát triển...`;
 
             if (elapsedTime < halfGrowthTime) {
                 landGrid[index] = "🌱"; // Giai đoạn đầu
@@ -52,9 +58,18 @@ module.exports = {
                 landGrid[index] = "🌿"; // Giai đoạn giữa
             } else if (elapsedTime < damageTime) {
                 landGrid[index] = crops[crop.name].emoji; // Giai đoạn cuối
+                status = "✅ Có thể thu hoạch ngay!";
             } else {
                 landGrid[index] = "🐛"; // Cây bị sâu
+                status = "❌ Bị sâu!";
             }
+
+            if (elapsedTime >= fullGrowthTime) timeLeft = 0;
+            else timeLeft = Math.ceil(timeLeft / (60 * 1000)); // Chuyển thành phút
+
+            const key = `${crops[crop.name].emoji} **${crop.name}** - ${status} (${timeLeft > 0 ? `${timeLeft} phút` : ""})`;
+            if (!cropCount[key]) cropCount[key] = 0;
+            cropCount[key]++;
         });
 
         let farmDisplay = "";
@@ -62,6 +77,23 @@ module.exports = {
             farmDisplay += landGrid.slice(i, i + 10).join(" ") + "\n";
         }
 
-        message.reply(`🏡 **Trang trại của ${message.author.username}:**\n\n${farmDisplay}`);
+        let farmInfo = Object.entries(cropCount).map(([info, count]) => ({
+            name: " ",
+            value: `${info} x${count}`,
+            inline: false
+        }));
+
+        if (farmInfo.length === 0) {
+            farmInfo.push({ name: " ", value: "Không có cây nào được trồng!" });
+        }
+
+        const farmEmbed = new EmbedBuilder()
+            .setColor("#FFA500")
+            .setTitle(`🏡 Trang trại của ${message.author.username}`)
+            .setDescription(farmDisplay)
+            .addFields(farmInfo)
+            .setFooter({ text: "Dùng lệnh kharvest để thu hoạch cây trồng đã chín!" });
+
+        message.reply({ embeds: [farmEmbed] });
     },
 };
