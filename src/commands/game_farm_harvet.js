@@ -1,6 +1,6 @@
 const Farm = require("../model/farmModel");
 const User = require("../model/userModel");
-
+const { crops } = require("../utils/constants");
 module.exports = {
     name: "harvest",
     description: "Thu hoạch cây trồng đã chín và loại bỏ cây bị sâu.",
@@ -32,12 +32,11 @@ module.exports = {
             if (elapsedTime >= growTimeMs) {
                 harvestedCrops.push(crop.name);
                 if (!user.storage) user.storage = {}; // Đảm bảo storage tồn tại
-                user.storage[crop.name] = (user.storage[crop.name] || 0) + 1;
+                user.storage.set(crop.name, (user.storage.get(crop.name) || 0) + 1);
             } else {
                 newCrops.push(crop);
             }
         }
-
         // Cập nhật farm, loại bỏ cây bị sâu
         farm.crops = newCrops;
         await user.save();  // Lưu user để cập nhật kho
@@ -53,9 +52,8 @@ module.exports = {
             });
 
             let harvestMessage = Object.entries(cropSummary)
-                .map(([name, count]) => `🌾 ${name}: ${count} cây`)
+                .map(([name, count]) => `${crops[name]?.emoji || "🌱"} ${name}: ${count}`)
                 .join("\n");
-
             messages.push(`🎉 Bạn đã thu hoạch thành công:\n${harvestMessage}\n📦 Chúng đã được lưu vào kho.`);
         }
 
