@@ -26,7 +26,7 @@ module.exports = {
         await user.save();
 
         // Tạo mỏ với 9 ô (đá, vàng, kim cương, rỗng, bẫy)
-        const rewards = ["💎", "🪙", "⛏️", "⛏️", "🪨", "🪨", "🔴", "🔴", "🔴"];
+        const rewards = ["💎", "💰", "🏆", "🏆", "📜", "📜", "💀", "💀", "💀"];
         const values = [500, 200, 100, 100, 50, 50, -100, -100, -100]; // Giá trị tương ứng
 
         // Xáo trộn phần thưởng
@@ -49,7 +49,6 @@ module.exports = {
             .setColor(0x0099ff)
             .setTitle("⛏️ Mỏ khoáng sản")
             .setDescription("Chọn 1 trong 9 ô để đào!\nBạn có **3 lần** đào.")
-            .setFooter({ text: "Nhấn nút bên dưới để đào." });
 
         const msg = await message.channel.send({ embeds: [embed], components: rows });
 

@@ -8,7 +8,12 @@ const userSchema = new mongoose.Schema({
     lastWorked: { type: Number, default: 0 }, // Thời gian cuối cùng nhận tiền từ work
     lastRob: { type: Number, default: 0 }, // Thời gian cuối cùng nhận tiền từ rob
     lastCrime: { type: Number, default: 0 }, // Thời gian cuối cùng nhận tiền từ rob
-    lastMine: { type: Number, default: 0 }
+    lastMine: { type: Number, default: 0 },
+    storage: {
+        type: Map,
+        of: Number, // Key: tên nông sản, Value: số lượng
+        default: {}
+    }
 });
 
 // Tạo model từ schema
