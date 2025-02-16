@@ -44,7 +44,7 @@ module.exports = {
             const elapsedTime = currentTime - new Date(crop.plantedAt).getTime();
             const halfGrowthTime = crop.harvestTime / 2;
             const fullGrowthTime = crop.harvestTime;
-            const damageTime = crop.harvestTime * 2; // Nếu quá 2 lần thời gian thu hoạch thì bị sâu
+            const damageTime = crop.harvestTime + 60 * 60 * 1000; // Nếu quá 2 lần thời gian thu hoạch thì bị sâu
 
             if (elapsedTime < halfGrowthTime) {
                 landGrid[index] = "🌱"; // Giai đoạn đầu

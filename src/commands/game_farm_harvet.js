@@ -19,28 +19,29 @@ module.exports = {
         let newCrops = [];
 
         for (let crop of farm.crops) {
-            let growTime = crop.harvestTime;
+            let growTimeMs = crop.harvestTime; // Chuyển đổi thành mili giây
             let plantedAt = new Date(crop.plantedAt).getTime();
             let elapsedTime = now - plantedAt;
-            let damageTime = growTime * 2; // Nếu quá 2 lần thời gian thu hoạch thì cây bị sâu
+            let damageTime = growTimeMs + 60 * 60 * 1000; // Nếu quá 1 tiếng lần thời gian thu hoạch thì cây bị sâu
 
             if (elapsedTime >= damageTime) {
-                removedCrops.push(crop.name); // Ghi lại cây bị sâu
-                continue; // Không lưu vào newCrops => Cây sẽ bị xóa
+                removedCrops.push(crop.name);
+                continue;
             }
 
-            if (elapsedTime >= growTime) {
+            if (elapsedTime >= growTimeMs) {
                 harvestedCrops.push(crop.name);
-                user.storage[crop.name] = (user.storage[crop.name] || 0) + 1; // Cập nhật kho
+                if (!user.storage) user.storage = {}; // Đảm bảo storage tồn tại
+                user.storage[crop.name] = (user.storage[crop.name] || 0) + 1;
             } else {
-                newCrops.push(crop); // Giữ lại cây chưa thu hoạch và chưa bị sâu
+                newCrops.push(crop);
             }
         }
 
         // Cập nhật farm, loại bỏ cây bị sâu
         farm.crops = newCrops;
-        await user.save();
-        await farm.save();
+        await user.save();  // Lưu user để cập nhật kho
+        await farm.save();  // Lưu farm để cập nhật cây trồng
 
         // Thông báo kết quả
         let messages = [];
@@ -52,7 +53,7 @@ module.exports = {
             });
 
             let harvestMessage = Object.entries(cropSummary)
-                .map(([name, count]) => `🌱 ${name}: ${count} cây`)
+                .map(([name, count]) => `🌾 ${name}: ${count} cây`)
                 .join("\n");
 
             messages.push(`🎉 Bạn đã thu hoạch thành công:\n${harvestMessage}\n📦 Chúng đã được lưu vào kho.`);
