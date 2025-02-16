@@ -15,6 +15,7 @@ module.exports = {
 
         let now = Date.now();
         let harvestedCrops = [];
+        let removedCrops = [];
         let newCrops = [];
 
         for (let crop of farm.crops) {
@@ -24,25 +25,56 @@ module.exports = {
             let damageTime = growTime * 2; // Nếu quá 2 lần thời gian thu hoạch thì cây bị sâu
 
             if (elapsedTime >= damageTime) {
-                continue; // Bỏ cây bị sâu, không thêm vào newCrops => Cây sẽ bị xóa
+                removedCrops.push(crop.name); // Ghi lại cây bị sâu
+                continue; // Không lưu vào newCrops => Cây sẽ bị xóa
             }
 
-            if (elapsedTime >= growTime && !crop.isHarvested) {
+            if (elapsedTime >= growTime) {
                 harvestedCrops.push(crop.name);
-                user.storage.set(crop.name, (user.storage.get(crop.name) || 0) + 1); // Cập nhật kho
+                user.storage[crop.name] = (user.storage[crop.name] || 0) + 1; // Cập nhật kho
             } else {
                 newCrops.push(crop); // Giữ lại cây chưa thu hoạch và chưa bị sâu
             }
         }
 
-        farm.crops = newCrops; // Cập nhật danh sách cây trồng (loại bỏ cây bị sâu)
+        // Cập nhật farm, loại bỏ cây bị sâu
+        farm.crops = newCrops;
         await user.save();
         await farm.save();
 
-        if (harvestedCrops.length === 0) {
-            return message.reply("⚠️ Không có cây nào sẵn sàng để thu hoạch!");
+        // Thông báo kết quả
+        let messages = [];
+
+        if (harvestedCrops.length > 0) {
+            let cropSummary = {};
+            harvestedCrops.forEach(name => {
+                cropSummary[name] = (cropSummary[name] || 0) + 1;
+            });
+
+            let harvestMessage = Object.entries(cropSummary)
+                .map(([name, count]) => `🌱 ${name}: ${count} cây`)
+                .join("\n");
+
+            messages.push(`🎉 Bạn đã thu hoạch thành công:\n${harvestMessage}\n📦 Chúng đã được lưu vào kho.`);
         }
 
-        message.reply(`🎉 Bạn đã thu hoạch **${harvestedCrops.length}** cây! Chúng đã được lưu vào kho. 📦`);
+        if (removedCrops.length > 0) {
+            let removeSummary = {};
+            removedCrops.forEach(name => {
+                removeSummary[name] = (removeSummary[name] || 0) + 1;
+            });
+
+            let removeMessage = Object.entries(removeSummary)
+                .map(([name, count]) => `🪳 ${name}: ${count} cây bị sâu và đã bị xóa!`)
+                .join("\n");
+
+            messages.push(`🚨 Một số cây đã bị sâu và bị loại bỏ:\n${removeMessage}`);
+        }
+
+        if (messages.length === 0) {
+            return message.reply("⚠️ Không có cây nào sẵn sàng để thu hoạch hoặc bị sâu!");
+        }
+
+        message.reply(messages.join("\n\n"));
     },
 };

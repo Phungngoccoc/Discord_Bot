@@ -1,6 +1,6 @@
 const crops = {
-    "rice": { emoji: "🌾", buyPrice: 20, sellPrice: 40, harvestTime: 10 * 60 * 1000 }, // 10 phút
-    "carrot": { emoji: "🥕", buyPrice: 35, sellPrice: 70, harvestTime: 12 * 60 * 1000 }, // 12 phút
+    "rice": { emoji: "🌾", buyPrice: 20, sellPrice: 40, harvestTime: 1 * 60 * 1000 }, // 10 phút
+    "carrot": { emoji: "🥕", buyPrice: 35, sellPrice: 70, harvestTime: 0 * 60 * 1000 }, // 12 phút
     "corn": { emoji: "🌽", buyPrice: 30, sellPrice: 60, harvestTime: 20 * 60 * 1000 }, // 20 phút
     "potato": { emoji: "🥔", buyPrice: 40, sellPrice: 80, harvestTime: 25 * 60 * 1000 }, // 25 phút
     "tomato": { emoji: "🍅", buyPrice: 50, sellPrice: 100, harvestTime: 15 * 60 * 1000 }, // 15 phút

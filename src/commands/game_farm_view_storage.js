@@ -17,30 +17,10 @@ module.exports = {
             return message.reply("📦 Kho của bạn đang trống. Hãy thu hoạch để có nông sản!");
         }
 
-        let currentTime = Date.now();
         let storageDisplay = "📦 **Kho nông sản của bạn:**\n";
-
-        storage.forEach((cropData, cropName) => {
-            const { quantity, plantTime } = cropData;
-            const cropInfo = crops[cropName];
-
-            if (!cropInfo) return;
-
-            const { emoji, harvestTime } = cropInfo;
-            let elapsedTime = (currentTime - plantTime) / 1000; // Thời gian trồng đã trôi qua (giây)
-            let growthEmoji = "🌱"; // Mặc định là cây non
-
-            if (elapsedTime >= harvestTime * 1.5) {
-                growthEmoji = "🐛"; // Cây bị sâu ăn mất
-            } else if (elapsedTime >= harvestTime) {
-                growthEmoji = emoji; // Cây đã chín
-            } else if (elapsedTime >= harvestTime / 2) {
-                growthEmoji = "🌿"; // Cây trưởng thành (chưa chín)
-            } else {
-                growthEmoji = "🌱"; // Cây mới nảy mầm
-            }
-
-            storageDisplay += `${growthEmoji} **${cropName}**: ${quantity} cây\n`;
+        storage.forEach((quantity, crop) => {
+            const emoji = crops[crop]?.emoji || "🌱"; // Lấy emoji theo crop, nếu không có thì dùng mặc định 🌱
+            storageDisplay += `${emoji} **${crop}**: ${quantity} cây\n`;
         });
 
         message.reply(storageDisplay);
