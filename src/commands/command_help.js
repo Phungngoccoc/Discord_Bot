@@ -18,6 +18,11 @@ module.exports = {
                     name: "🎲 Mini games",
                     value: "``bc`` ``caro`` ``bigcaro`` ``bj`` ``duel`` ``guess`` ``slot`` ``treasure`` ``chess`` ``mine`` ``quiz`` ",
                     inline: false
+                },
+                {
+                    name: "🚜 Nông trại",
+                    value: "``farm`` ``buyland`` ``buyseed`` ``storage`` ``sell`` ``harvest`` ``seed``",
+                    inline: false
                 }
             );
 
