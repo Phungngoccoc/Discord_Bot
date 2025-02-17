@@ -16,7 +16,7 @@ module.exports = {
                 },
                 {
                     name: "🎲 Mini games",
-                    value: "``bc`` ``caro`` ``bigcaro`` ``bj`` ``duel`` ``guess`` ``slot`` ``treasure`` ``chess`` ``mine`` ``quiz`` ",
+                    value: "``bc`` ``caro`` ``bigcaro`` ``bj`` ``duel`` ``guess`` ``slot`` ``treasure`` ``chess`` ``mine`` ``quiz`` ``race`` ",
                     inline: false
                 },
                 {
@@ -26,6 +26,6 @@ module.exports = {
                 }
             );
 
-        await message.reply({ embeds: [embed] });
+        await message.channel.send({ embeds: [embed] });
     }
 };

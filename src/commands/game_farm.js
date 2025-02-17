@@ -34,7 +34,7 @@ module.exports = {
                 )
                 .setFooter({ text: "Chúc bạn vui vẻ với trang trại của mình! 🌻" });
 
-            return message.reply({ embeds: [helpEmbed] });
+            return message.channel.send({ embeds: [helpEmbed] });
         }
 
         let landGrid = Array(farm.landSlots).fill("🟫"); // Mặc định là đất trống

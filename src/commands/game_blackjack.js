@@ -8,7 +8,7 @@ module.exports = {
         const userId = message.author.id;
 
         if (message.content.toLowerCase().includes('help')) {
-            return message.reply("🃏 **Hướng dẫn chơi Blackjack** 🃏\n" +
+            return message.channel.send("🃏 **Hướng dẫn chơi Blackjack** 🃏\n" +
                 "1️⃣ Gõ `!bj <số tiền>` để đặt cược.\n" +
                 "2️⃣ Bạn bắt đầu với 2 lá bài. Dealer cũng vậy.\n" +
                 "3️⃣ `Rút thêm` để lấy thêm bài, tối đa 5 lá.\n" +
@@ -86,10 +86,10 @@ module.exports = {
             .setAuthor({ name: `${message.author.username} cược ${betAmount} xu`, iconURL: message.author.displayAvatarURL() })
             .addFields(
                 { name: `👤 ${message.author.username} [${playerScore}]`, value: `${playerCards.map(cardToEmoji).join(' ')}`, inline: true },
-                { name: `🤖 Dealer **[? + ?]**`, value: `${cardToEmoji(botCards[0])} ❓`, inline: true }
+                { name: `🤖 Dealer **[${getCardValue(botCards[0])}+?]**`, value: `${cardToEmoji(botCards[0])} ❓`, inline: true }
             );
 
-        let msg = await message.reply({ embeds: [embed], components: [row] });
+        let msg = await message.channel.send({ embeds: [embed], components: [row] });
 
         const filter = (interaction) => interaction.user.id === message.author.id;
         const collector = msg.createMessageComponentCollector({ filter, time: 60000 });
@@ -110,7 +110,7 @@ module.exports = {
                         .setAuthor({ name: `${message.author.username} cược ${betAmount} xu`, iconURL: message.author.displayAvatarURL() })
                         .addFields(
                             { name: `👤 ${message.author.username} [${playerScore}]`, value: `${playerCards.map(cardToEmoji).join(' ')}`, inline: true },
-                            { name: `🤖 Dealer **[? + ?]**`, value: `${cardToEmoji(botCards[0])} ❓`, inline: true }
+                            { name: `🤖 Dealer **[${getCardValue(botCards[0])}+?]**`, value: `${cardToEmoji(botCards[0])} ❓`, inline: true }
                         )
                     ],
                     components: [row]
@@ -154,9 +154,13 @@ module.exports = {
             } else if (playerScore > 21 && botScore > 21) {
                 user.money += betAmount;
                 messageText = `Hòa, bạn nhận lại **${betAmount} xu**.`;
-            } else if (playerScore <= 21 && botScore > 21) {
+            } else if (playerScore <= 21 && botScore > 21 || playerScore <= 21 && playerScore > botScore) {
                 user.money += betAmount * 2;
                 messageText = `Bạn đã thắng **${betAmount} xu**.`;
+            } else if (playerScore <= 21 && botScore < playerScore) {
+                user.money += betAmount * 2;
+                messageText = `Bạn đã thắng **${betAmount} xu**.`;
+
             } else {
                 messageText = `Bạn đã thua **${betAmount} xu**.`;
             }
