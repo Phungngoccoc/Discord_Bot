@@ -13,7 +13,8 @@ const client = new Client({
     partials: ["MESSAGE", "CHANNEL", "REACTION", "USER"],
 });
 connectDB();  // Kết nối với MongoDB
-
+const readyCheck = require("./auto/harvest_check.js");
+readyCheck.execute(client);
 // Tạo Collection để lưu các lệnh Slash
 client.commands = new Collection();
 

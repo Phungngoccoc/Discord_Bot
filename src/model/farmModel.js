@@ -7,6 +7,7 @@ const cropSchema = new mongoose.Schema({
     isHarvested: { type: Boolean, default: false },
     isDamaged: { type: Boolean, default: false },
     fertilizerUsed: { type: Boolean, default: false },
+    isAlert: { type: Boolean, default: false },
 });
 
 const farmSchema = new mongoose.Schema({
