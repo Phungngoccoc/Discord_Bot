@@ -1,4 +1,4 @@
-const User = require('../model/userModel'); // Giả sử bạn có model User trong MongoDB
+const User = require('../../../model/userModel'); // Giả sử bạn có model User trong MongoDB
 
 module.exports = {
     name: 's',

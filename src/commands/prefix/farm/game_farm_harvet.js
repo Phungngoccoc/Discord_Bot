@@ -1,6 +1,6 @@
-const Farm = require("../model/farmModel");
-const User = require("../model/userModel");
-const { crops } = require("../utils/constants");
+const Farm = require("../../../model/farmModel");
+const User = require("../../../model/userModel");
+const { crops } = require("../../../utils/constants");
 module.exports = {
     name: "harvest",
     description: "Thu hoạch cây trồng đã chín và loại bỏ cây bị sâu.",

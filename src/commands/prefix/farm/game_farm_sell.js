@@ -1,5 +1,5 @@
-const User = require("../model/userModel");
-const { crops } = require("../utils/constants");
+const User = require("../../../model/userModel");
+const { crops } = require("../../../utils/constants");
 
 module.exports = {
     name: "sell",

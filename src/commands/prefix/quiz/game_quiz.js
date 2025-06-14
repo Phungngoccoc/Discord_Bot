@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require("discord.js");
-const Question = require("../model/questionModel"); // Model câu hỏi
-const User = require("../model/userModel"); // Model người dùng
+const Question = require("../../../model/questionModel"); // Model câu hỏi
+const User = require("../../../model/userModel"); // Model người dùng
 
 module.exports = {
     name: "quiz",

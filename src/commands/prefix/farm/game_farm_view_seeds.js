@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
-const { crops } = require("../utils/constants");
+const { crops } = require("../../../utils/constants");
 
 module.exports = {
     name: "seed",

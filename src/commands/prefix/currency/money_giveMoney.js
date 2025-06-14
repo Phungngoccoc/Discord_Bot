@@ -1,5 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
-const { getUserData, updateUserData } = require("../service/userService");
+const { getUserData, updateUserData } = require("../../../service/userService");
 
 module.exports = {
     name: "give",

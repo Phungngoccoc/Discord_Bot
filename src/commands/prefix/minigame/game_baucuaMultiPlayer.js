@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { getUserData, updateUserData } = require("../service/userService");
+const { getUserData, updateUserData } = require("../../../service/userService");
 
 const emojiMap = {
     "bầu": "🍐",

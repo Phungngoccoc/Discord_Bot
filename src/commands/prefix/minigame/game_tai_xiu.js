@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js");
-const { getUserData, updateUserData } = require("../service/userService");
+const { getUserData, updateUserData } = require("../../../service/userService");
 
 let gameRunning = false; // Biến kiểm tra trạng thái game
 

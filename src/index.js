@@ -2,7 +2,9 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, Collection } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
-const connectDB = require('./config/db');  // Thay đổi đường dẫn import
+const connectDB = require('./config/db');
+const config = require("./config/config.js");
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -12,31 +14,41 @@ const client = new Client({
     ],
     partials: ["MESSAGE", "CHANNEL", "REACTION", "USER"],
 });
-connectDB();  // Kết nối với MongoDB
+
+connectDB();
 const readyCheck = require("./auto/harvest_check.js");
 readyCheck.execute(client);
-// Tạo Collection để lưu các lệnh Slash
-client.commands = new Collection();
 
-// Load lệnh Slash từ thư mục commands/
-const commandsPath = path.join(__dirname, "commands");
-if (fs.existsSync(commandsPath)) {
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+client.prefixCommands = new Collection();
+client.slashCommands = new Collection();
 
-    for (const file of commandFiles) {
-        const command = require(path.join(commandsPath, file));
+// Hàm đệ quy để load command
+function loadCommandsRecursively(dirPath, isSlash = false) {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
-        if (!command || !command.data || typeof command.execute !== "function") {
-            continue;
+    for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+
+        if (entry.isDirectory()) {
+            loadCommandsRecursively(fullPath, isSlash);
+        } else if (entry.name.endsWith(".js")) {
+            const command = require(fullPath);
+            if (isSlash && command?.data && typeof command.execute === "function") {
+                client.slashCommands.set(command.data.name, command);
+            } else if (!isSlash && command?.name && typeof command.execute === "function") {
+                client.prefixCommands.set(command.name, command);
+            }
         }
-
-        client.commands.set(command.data.name, command);
     }
-} else {
-    console.error("❌ Không tìm thấy thư mục 'commands'!");
 }
 
-// Load sự kiện
+// Load prefix commands
+loadCommandsRecursively(path.join(__dirname, "commands/prefix"), false);
+
+// Load slash commands
+loadCommandsRecursively(path.join(__dirname, "commands/slash"), true);
+
+// Load events
 const eventsPath = path.join(__dirname, "events");
 if (fs.existsSync(eventsPath)) {
     const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith(".js"));
@@ -47,5 +59,4 @@ if (fs.existsSync(eventsPath)) {
 }
 
 // Kết nối bot
-const config = require("./config/config.js");
 client.login(config.token);

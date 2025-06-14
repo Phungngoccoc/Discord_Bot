@@ -1,4 +1,4 @@
-const QuestionService = require("../service/questionService");
+const QuestionService = require("../../../service/questionService");
 
 module.exports = {
     name: "addq",

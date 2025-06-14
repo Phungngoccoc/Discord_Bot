@@ -1,5 +1,5 @@
-const { updateUserData } = require("../service/userService");
-const User = require("../model/userModel");
+const { updateUserData } = require("../../../service/userService");
+const User = require("../../../model/userModel");
 
 module.exports = {
     name: "getmoney",

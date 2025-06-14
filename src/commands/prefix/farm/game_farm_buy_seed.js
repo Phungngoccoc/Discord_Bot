@@ -1,6 +1,6 @@
-const Farm = require("../model/farmModel");
-const User = require("../model/userModel");
-const { crops } = require("../utils/constants"); // Đảm bảo import đúng
+const Farm = require("../../../model/farmModel");
+const User = require("../../../model/userModel");
+const { crops } = require("../../../utils/constants"); // Đảm bảo import đúng
 
 module.exports = {
     name: "buyseed",

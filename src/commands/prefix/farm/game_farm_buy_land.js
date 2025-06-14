@@ -1,5 +1,5 @@
-const Farm = require("../model/farmModel");
-const User = require("../model/userModel");
+const Farm = require("../../../model/farmModel");
+const User = require("../../../model/userModel");
 
 module.exports = {
     name: "buyland",
