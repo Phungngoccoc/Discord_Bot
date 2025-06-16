@@ -1,6 +1,6 @@
 # Bỏ qua thư mục node_modules
 node_modules/
-
+assets/
 # Bỏ qua file .env (chứa biến môi trường, API keys...)
 .env
 .env.local
