@@ -10,21 +10,21 @@ module.exports = {
         let farm = await Farm.findOne({ userId });
 
         if (!user || !farm) {
-            return message.reply("❌ Bạn chưa có trang trại! Hãy mua hạt giống trước.");
+            return message.reply("Bạn chưa có trang trại! Dùng lệnh farm để tạo nông trại mới");
         }
 
-        let landToBuy = parseInt(args[0]); // Lấy số ô đất muốn mua từ tham số
+        let landToBuy = parseInt(args[0]);
         if (isNaN(landToBuy) || landToBuy <= 0) {
-            return message.reply("⚠️ Vui lòng nhập số ô đất hợp lệ cần mua!");
+            return message.reply("Vui lòng nhập số ô đất hợp lệ cần mua!");
         }
 
         if (farm.landSlots + landToBuy > 100) {
-            return message.reply(`⚠️ Bạn không thể mua quá 100 ô đất! Hiện tại bạn có **${farm.landSlots}** ô.`);
+            return message.reply(`Bạn không thể mua quá 100 ô đất! Hiện tại bạn có **${farm.landSlots}** ô.`);
         }
 
         let totalCost = landToBuy * 100; // 100 xu mỗi ô
         if (user.money < totalCost) {
-            return message.reply(`❌ Bạn không đủ tiền! Cần **${totalCost}** xu để mua ${landToBuy} ô đất.`);
+            return message.reply(`Bạn không đủ tiền! Cần **${totalCost}** xu để mua ${landToBuy} ô đất.`);
         }
 
         // Cập nhật thông tin trang trại và tiền

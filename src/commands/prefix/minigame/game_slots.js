@@ -8,8 +8,8 @@ module.exports = {
             return message.reply(`📜 **Hướng dẫn chơi Slot** 📜\n\n🎰 **Cách chơi:**\n- Nhập lệnh \`kslot <số tiền cược>\` để quay máy đánh bạc.\n- Hệ thống sẽ quay 10 ô slot với các biểu tượng ngẫu nhiên.\n\n💰 **Tỷ lệ thắng:**\n- 2 biểu tượng trùng: Mất toàn bộ tiền cược.\n- 3 biểu tượng trùng: Hoàn lại 50% tiền cược.\n- 4 biểu tượng trùng: Thắng x1.5 tiền cược.\n- 5 biểu tượng trùng: Thắng x5 tiền cược.\n- 6 biểu tượng trùng: Thắng x10 tiền cược.\n- 7 biểu tượng trùng: Thắng x50 tiền cược.\n- 8 biểu tượng trùng: Thắng x100 tiền cược.\n- 9 biểu tượng trùng: Thắng x500 tiền cược.\n- 10 biểu tượng trùng: Thắng x1000 tiền cược.\n\nChúc bạn may mắn! 🍀`);
         }
 
-        const symbols = ['<:slots1:1338720715054256168>', '<:slots2:1338720717323239494>', '<:slots6:1338720727322595498>', '<:slots5:1338720724864602253>', '<:slots3:1338720719345029164>', '<:slots4:1338721143267262524>'];
-
+        // const symbols = ['<:slots1:1338720715054256168>', '<:slots2:1338720717323239494>', '<:slots6:1338720727322595498>', '<:slots5:1338720724864602253>', '<:slots3:1338720719345029164>', '<:slots4:1338721143267262524>'];
+        const symbols = ['<:slots1:1338720715054256168>'];
         // Lấy số tiền cược từ tin nhắn
         const match = message.content.match(/\d+/);
         let betAmount = match && !isNaN(match[0]) ? parseInt(match[0]) : 1;

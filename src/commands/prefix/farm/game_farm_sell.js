@@ -9,7 +9,7 @@ module.exports = {
         let user = await User.findOne({ userId });
 
         if (!user || !user.storage || user.storage.size === 0) {
-            return message.reply("⚠️ Bạn không có nông sản nào để bán!");
+            return message.reply("Bạn không có nông sản nào để bán!");
         }
 
         let totalEarnings = 0;
@@ -20,14 +20,14 @@ module.exports = {
                 let earnings = crops[crop].sellPrice * quantity;
 
                 totalEarnings += earnings;
-                sellDetails.push(`💰 **${crop}**: ${quantity} cây → **+${earnings} xu**`);
+                sellDetails.push(`**${crop}**: ${quantity} cây → **+${earnings} xu**`);
 
                 user.storage.delete(crop); // Xóa đúng cách
             }
         }
 
         if (totalEarnings === 0) {
-            return message.reply("⚠️ Bạn không có nông sản nào để bán!");
+            return message.reply("Bạn không có nông sản nào để bán!");
         }
 
         user.money += totalEarnings;

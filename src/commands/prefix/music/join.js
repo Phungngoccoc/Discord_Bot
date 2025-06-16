@@ -16,8 +16,6 @@ module.exports = {
                 guildId: message.guild.id,
                 adapterCreator: message.guild.voiceAdapterCreator,
             });
-
-            message.reply("Đã tham gia voice channel!");
         } catch (error) {
             console.error("Lỗi khi tham gia voice channel:", error);
             message.reply("Không thể tham gia voice channel!");

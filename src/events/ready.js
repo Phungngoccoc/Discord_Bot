@@ -1,7 +1,7 @@
 const { ActivityType } = require("discord.js");
 
 module.exports = (client) => {
-    console.log(`✅ Bot đã online với tên: ${client.user.tag}`);
+    console.log(`Bot đã online với tên: ${client.user.tag}`);
     
     // Set activity cho bot
     client.user.setActivity({

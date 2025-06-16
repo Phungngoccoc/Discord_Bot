@@ -10,7 +10,7 @@ module.exports = {
         let farm = await Farm.findOne({ userId });
 
         if (!user || !farm) {
-            return message.reply("❌ Bạn chưa có trang trại! Hãy mua đất trước.");
+            return message.reply("Bạn chưa có trang trại! Dùng lệnh farm để tạo nông trại mới. ");
         }
 
         let now = Date.now();
@@ -54,7 +54,7 @@ module.exports = {
             let harvestMessage = Object.entries(cropSummary)
                 .map(([name, count]) => `${crops[name]?.emoji || "🌱"} ${name}: ${count}`)
                 .join("\n");
-            messages.push(`🎉 Bạn đã thu hoạch thành công:\n${harvestMessage}\n📦 Chúng đã được lưu vào kho.`);
+            messages.push(`Bạn đã thu hoạch thành công:\n${harvestMessage}\n Chúng đã được lưu vào kho.`);
         }
 
         if (removedCrops.length > 0) {
@@ -67,11 +67,11 @@ module.exports = {
                 .map(([name, count]) => `🪳 ${name}: ${count} cây bị sâu và đã bị xóa!`)
                 .join("\n");
 
-            messages.push(`🚨 Một số cây đã bị sâu và bị loại bỏ:\n${removeMessage}`);
+            messages.push(`Một số cây đã bị sâu và bị loại bỏ:\n${removeMessage}`);
         }
 
         if (messages.length === 0) {
-            return message.reply("⚠️ Không có cây nào sẵn sàng để thu hoạch hoặc bị sâu!");
+            return message.reply("Không có cây nào sẵn sàng để thu hoạch hoặc bị sâu!");
         }
 
         message.reply(messages.join("\n\n"));

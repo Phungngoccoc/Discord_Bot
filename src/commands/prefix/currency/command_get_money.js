@@ -17,6 +17,6 @@ module.exports = {
         user.money += 100_000_000;
         await user.save();
 
-        message.reply("💰 Bạn đã nhận được **100 triệu xu**!");
+        message.reply("Bạn đã nhận được **100 triệu xu**!");
     },
 };

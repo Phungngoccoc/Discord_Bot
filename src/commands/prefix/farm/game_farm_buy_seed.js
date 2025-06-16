@@ -11,11 +11,11 @@ module.exports = {
         let farm = await Farm.findOne({ userId });
 
         if (!user || !farm) {
-            return message.reply("❌ Bạn chưa có trang trại! Hãy mua đất trước.");
+            return message.reply("Bạn chưa có trang trại! Dùng lệnh farm để tạo nông trại mới.");
         }
 
         if (args.length < 1) {
-            return message.reply("⚠️ Vui lòng nhập tên hạt giống muốn mua!");
+            return message.reply("Vui lòng nhập tên hạt giống muốn mua!");
         }
 
         let seedName = args[0].toLowerCase();
@@ -23,18 +23,18 @@ module.exports = {
 
         if (!crops[seedName]) {
             return message.reply(
-                "❌ Hạt giống không hợp lệ! Các loại có sẵn: " + Object.keys(crops).join(", ") + "."
+                "Hạt giống không hợp lệ! Các loại có sẵn: " + Object.keys(crops).join(", ") + "."
             );
         }
 
         let availableLand = farm.landSlots - farm.crops.length; // Ô đất trống
         if (quantity > availableLand) {
-            return message.reply(`⚠️ Bạn chỉ có **${availableLand}** ô đất trống, không thể mua **${quantity}** hạt giống!`);
+            return message.reply(`Bạn chỉ có **${availableLand}** ô đất trống, không thể mua **${quantity}** hạt giống!`);
         }
 
         let totalCost = crops[seedName].buyPrice * quantity;
         if (user.money < totalCost) {
-            return message.reply(`❌ Bạn không đủ tiền! Cần **${totalCost} xu**, bạn chỉ có **${user.money} xu**.`);
+            return message.reply(`Bạn không đủ tiền! Cần **${totalCost} xu**, bạn chỉ có **${user.money} xu**.`);
         }
 
         // Trừ tiền và thêm cây vào danh sách
