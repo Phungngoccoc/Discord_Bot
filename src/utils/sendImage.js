@@ -10,7 +10,6 @@ async function sendImageByConfig(message) {
     try {
         const guildId = message.guild.id;
         const content = message.content.trim().toLowerCase();
-        console.log(content)
         // 1. Kiểm tra kênh hợp lệ
         const config = await ImageChannel.findOne({ guildId });
         if (!config || message.channel.id !== config.channelId) return;
