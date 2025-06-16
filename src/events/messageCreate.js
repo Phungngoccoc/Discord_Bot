@@ -2,7 +2,8 @@ const config = require("../config/config.js");
 const sendImageByConfig = require('../utils/sendImage');
 
 module.exports = async (client, message) => {
-    if (message.content.trim().toLowerCase() === 'seg') {
+    if (message.content.trim().toLowerCase() === 'seg' || message.content.trim().toLowerCase() === 'girl'
+        || message.content.trim().toLowerCase() === 'femboy') {
         await sendImageByConfig(message);
         return;
     }
