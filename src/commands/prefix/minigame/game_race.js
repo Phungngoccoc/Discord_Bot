@@ -67,7 +67,7 @@ module.exports = {
                     raceFinished = true;
                     let winnerIndex = positions.indexOf(Math.max(...positions));
                     let winner = racers[winnerIndex].name;
-                    let resultMessage = userChoice === winnerIndex ? `🎉 Bạn đã thắng và nhận ${betAmount * 2}!` : `😢 Bạn đã thua!`;
+                    let resultMessage = userChoice === winnerIndex ? `Bạn đã thắng và nhận ${betAmount * 2}!` : `Bạn đã thua!`;
                     embed.setDescription(`🏁 ${winner} đã về đích trước!\n${resultMessage}`);
                     await msg.edit({ embeds: [embed] });
 

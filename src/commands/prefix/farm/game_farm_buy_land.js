@@ -22,17 +22,16 @@ module.exports = {
             return message.reply(`Bạn không thể mua quá 100 ô đất! Hiện tại bạn có **${farm.landSlots}** ô.`);
         }
 
-        let totalCost = landToBuy * 100; // 100 xu mỗi ô
+        let totalCost = landToBuy * 100; 
         if (user.money < totalCost) {
             return message.reply(`Bạn không đủ tiền! Cần **${totalCost}** xu để mua ${landToBuy} ô đất.`);
         }
 
-        // Cập nhật thông tin trang trại và tiền
         farm.landSlots += landToBuy;
         user.money -= totalCost;
 
         await farm.save();
         await user.save();
-        message.reply(`🏡 Bạn đã mua **${landToBuy}** ô đất! Hiện có **${farm.landSlots}/100** ô.`);
+        message.reply(`Bạn đã mua **${landToBuy}** ô đất! Hiện có **${farm.landSlots}/100** ô.`);
     },
 };

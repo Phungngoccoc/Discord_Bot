@@ -70,7 +70,7 @@ module.exports = {
 
             if (buttonInteraction.user.id !== players[currentPlayer].id) {
                 return buttonInteraction.reply({
-                    content: "❌ Không phải lượt của bạn!",
+                    content: "Không phải lượt của bạn!",
                     flags: 64
                 });
             }

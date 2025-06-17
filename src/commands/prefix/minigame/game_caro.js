@@ -71,14 +71,14 @@ module.exports = {
             if (!players[currentPlayer]) {
                 console.error(`[ERROR] Người chơi ${currentPlayer} chưa được xác định.`);
                 return buttonInteraction.reply({
-                    content: "⚠ Lỗi: Người chơi chưa được xác định!",
+                    content: "Lỗi: Người chơi chưa được xác định!",
                     flags: 64
                 });
             }
 
             if (buttonInteraction.user.id !== players[currentPlayer].id) {
                 return buttonInteraction.reply({
-                    content: "❌ Không phải lượt của bạn!",
+                    content: "Không phải lượt của bạn!",
                     flags: 64
                 });
             }

@@ -19,7 +19,7 @@ async function sendImageByConfig(message) {
         if (!fs.existsSync(folderPath)) return;
 
         const allFiles = fs.readdirSync(folderPath).filter(file =>
-            /\.(png|jpe?g|gif)$/i.test(file)
+            /\.(png|jpe?g|gif|webp)$/i.test(file)
         );
 
         if (allFiles.length === 0) {

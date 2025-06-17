@@ -19,7 +19,7 @@ module.exports = {
 
         let storageDisplay = "**Kho nông sản của bạn:**\n";
         storage.forEach((quantity, crop) => {
-            const emoji = crops[crop]?.emoji || "🌱"; // Lấy emoji theo crop, nếu không có thì dùng mặc định 🌱
+            const emoji = crops[crop]?.emoji || "🌱"; 
             storageDisplay += `${emoji} **${crop}**: ${quantity}\n`;
         });
 

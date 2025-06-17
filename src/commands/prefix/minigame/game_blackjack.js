@@ -21,15 +21,15 @@ module.exports = {
         const match = message.content.match(/\d+/);
         let betAmount = match ? parseInt(match[0]) : 1;
 
-        if (isNaN(betAmount) || betAmount <= 0) return message.reply("❌ Vui lòng nhập số tiền cược hợp lệ.");
-        if (betAmount > 200000000000000000000) return message.reply("❌ Số tiền cược tối đa là 200,000 xu.");
+        if (isNaN(betAmount) || betAmount <= 0) return message.reply("Vui lòng nhập số tiền cược hợp lệ.");
+        if (betAmount > 200000000000000000000) return message.reply("Số tiền cược tối đa là 200,000 xu.");
 
         let user = await getUserData(userId);
         if (!user) {
             user = { money: 1000 };
             await updateUserData(userId, { money: user.money });
         }
-        if (betAmount > user.money) return message.reply("❌ Bạn không đủ tiền để cược số tiền này.");
+        if (betAmount > user.money) return message.reply("Bạn không đủ tiền để cược số tiền này.");
 
         user.money -= betAmount;
         await updateUserData(userId, { money: user.money });
@@ -132,25 +132,25 @@ module.exports = {
             let messageText = "";
             if (isPlayerFiveCard && !isBotFiveCard) {
                 user.money += betAmount * 3;
-                messageText = `🎉 **Ngũ linh!** Bạn thắng gấp 3 lần: **${betAmount * 3} xu**!`;
+                messageText = `**Ngũ linh!** Bạn thắng gấp 3 lần: **${betAmount * 3} xu**!`;
             } else if (isPlayerFiveCard && isBotFiveCard) {
                 if (playerScore > botScore) {
                     user.money += betAmount * 3;
-                    messageText = `🎉 **Ngũ linh!** Bạn thắng vì điểm cao hơn dealer! Nhận **${betAmount * 3} xu**!`;
+                    messageText = `**Ngũ linh!** Bạn thắng vì điểm cao hơn dealer! Nhận **${betAmount * 3} xu**!`;
                 } else if (playerScore < botScore) {
-                    messageText = `😢 Dealer cũng có **Ngũ linh** với điểm cao hơn bạn! Bạn thua **${betAmount} xu**.`;
+                    messageText = `Dealer cũng có **Ngũ linh** với điểm cao hơn bạn! Bạn thua **${betAmount} xu**.`;
                 } else {
                     user.money += betAmount;
-                    messageText = `🤝 **Cả hai có Ngũ linh!** Hòa, bạn nhận lại **${betAmount} xu**.`;
+                    messageText = `**Cả hai có Ngũ linh!** Hòa, bạn nhận lại **${betAmount} xu**.`;
                 }
             } else if (isBotFiveCard && !isPlayerFiveCard) {
-                messageText = `😢 Dealer có **Ngũ linh**! Bạn thua **${betAmount} xu**.`;
+                messageText = `Dealer có **Ngũ linh**! Bạn thua **${betAmount} xu**.`;
 
             } else if (playerScore > 21 && botScore <= 21 && botScore >= 16) {
                 messageText = `Bạn đã thua **${betAmount} xu**.`;
             } else if (playerScore === botScore) {
                 user.money += betAmount;
-                messageText = `🤝 Hòa! Bạn nhận lại **${betAmount} xu**.`;
+                messageText = `Hòa! Bạn nhận lại **${betAmount} xu**.`;
             } else if (playerScore > 21 && botScore > 21) {
                 user.money += betAmount;
                 messageText = `Hòa, bạn nhận lại **${betAmount} xu**.`;

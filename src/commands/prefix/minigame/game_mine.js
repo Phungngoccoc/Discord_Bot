@@ -59,11 +59,11 @@ module.exports = {
 
         collector.on("collect", async (interaction) => {
             if (interaction.user.id !== userId) {
-                return interaction.reply({ content: "❌ Bạn không phải người chơi!", ephemeral: true });
+                return interaction.reply({ content: "Bạn không phải người chơi!", ephemeral: true });
             }
 
             if (attempts <= 0) {
-                return interaction.reply({ content: "❌ Bạn đã hết lượt đào!", ephemeral: true });
+                return interaction.reply({ content: "Bạn đã hết lượt đào!", ephemeral: true });
             }
 
             // Lấy vị trí đào

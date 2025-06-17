@@ -37,8 +37,8 @@ module.exports = {
             return message.channel.send({ embeds: [helpEmbed] });
         }
 
-        let landGrid = Array(farm.landSlots).fill("🟫"); // Mặc định là đất trống
-        let cropCount = {}; // Để nhóm cây trồng theo loại và trạng thái
+        let landGrid = Array(farm.landSlots).fill("🟫"); 
+        let cropCount = {}; 
         const currentTime = Date.now();
 
         farm.crops.forEach((crop, index) => {
@@ -47,25 +47,25 @@ module.exports = {
             const elapsedTime = currentTime - new Date(crop.plantedAt).getTime();
             const halfGrowthTime = crops[crop.name].harvestTime / 2;
             const fullGrowthTime = crops[crop.name].harvestTime;
-            const damageTime = fullGrowthTime + 60 * 60 * 1000; // Nếu quá 1 tiếng sau khi trưởng thành thì bị sâu
+            const damageTime = fullGrowthTime + 60 * 60 * 1000; 
 
             let timeLeft = fullGrowthTime - elapsedTime;
             let status = `🌱 Đang phát triển...`;
 
             if (elapsedTime < halfGrowthTime) {
-                landGrid[index] = "🌱"; // Giai đoạn đầu
+                landGrid[index] = "🌱"; 
             } else if (elapsedTime < fullGrowthTime) {
-                landGrid[index] = "🌿"; // Giai đoạn giữa
+                landGrid[index] = "🌿"; 
             } else if (elapsedTime < damageTime) {
-                landGrid[index] = crops[crop.name].emoji; // Giai đoạn cuối
+                landGrid[index] = crops[crop.name].emoji;
                 status = "✅ Có thể thu hoạch ngay!";
             } else {
-                landGrid[index] = "🐛"; // Cây bị sâu
+                landGrid[index] = "🐛"; 
                 status = "❌ Bị sâu!";
             }
 
             if (elapsedTime >= fullGrowthTime) timeLeft = 0;
-            else timeLeft = Math.ceil(timeLeft / (60 * 1000)); // Chuyển thành phút
+            else timeLeft = Math.ceil(timeLeft / (60 * 1000)); 
 
             const key = `${crops[crop.name].emoji} **${crop.name}** - ${status} (${timeLeft > 0 ? `${timeLeft} phút` : ""})`;
             if (!cropCount[key]) cropCount[key] = 0;

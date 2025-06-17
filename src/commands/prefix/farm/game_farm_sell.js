@@ -22,7 +22,7 @@ module.exports = {
                 totalEarnings += earnings;
                 sellDetails.push(`**${crop}**: ${quantity} cây → **+${earnings} xu**`);
 
-                user.storage.delete(crop); // Xóa đúng cách
+                user.storage.delete(crop); 
             }
         }
 

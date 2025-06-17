@@ -11,7 +11,7 @@ const emojiMap = {
 };
 
 const choices = Object.keys(emojiMap);
-const betTime = 30000; // 30 giây đặt cược
+const betTime = 30000; 
 let activeGame = false;
 let playerBets = {};
 
@@ -56,7 +56,7 @@ module.exports = {
             let totalBet = Object.values(playerBets[userId] || {}).reduce((sum, bet) => sum + bet.betAmount, 0);
 
             if (totalBet + betAmount > userData.money) {
-                return user.send(`❌ Bạn không đủ tiền để đặt cược thêm! Tổng cược hiện tại: ${totalBet} xu, Số dư: ${userData.money} xu.`);
+                return user.send(`Bạn không đủ tiền để đặt cược thêm! Tổng cược hiện tại: ${totalBet} xu, Số dư: ${userData.money} xu.`);
             }
 
             if (!playerBets[userId]) playerBets[userId] = {};
@@ -66,17 +66,16 @@ module.exports = {
                 playerBets[userId][choice].betAmount += betAmount;
             }
 
-            user.send(`✅ Bạn đã đặt cược **${betAmount} xu** vào **${reaction.emoji.name}**! (Tổng: ${playerBets[userId][choice].betAmount} xu)`);
+            user.send(`Bạn đã đặt cược **${betAmount} xu** vào **${reaction.emoji.name}**! (Tổng: ${playerBets[userId][choice].betAmount} xu)`);
         });
 
 
         collector.on("end", async () => {
             if (Object.keys(playerBets).length === 0) {
                 activeGame = false;
-                return message.channel.send("❌ Không có ai tham gia! Trò chơi bị hủy.");
+                return message.channel.send("Không có ai tham gia! Trò chơi bị hủy.");
             }
 
-            // Tung xúc xắc (3 con)
             let results = [
                 choices[Math.floor(Math.random() * choices.length)],
                 choices[Math.floor(Math.random() * choices.length)],
@@ -118,7 +117,6 @@ module.exports = {
 
                     await sentMessage.edit({ embeds: [finalEmbed] });
 
-                    // Tính toán thắng thua
                     let resultText = `🎲 **Kết quả:** ${animationSteps[3]}\n\n`;
 
                     for (let userId in playerBets) {
@@ -137,11 +135,11 @@ module.exports = {
                         await updateUserData(userId, { money: userData.money });
 
                         if (netChange > 0) {
-                            resultText += `✅ <@${userId}> **thắng ${netChange} xu**! (Đặt: ${totalBet}, Nhận: ${totalWin})\n`;
+                            resultText += `<@${userId}> **thắng ${netChange} xu**! (Đặt: ${totalBet}, Nhận: ${totalWin})\n`;
                         } else if (netChange < 0) {
-                            resultText += `❌ <@${userId}> **thua ${Math.abs(netChange)} xu**! (Đặt: ${totalBet}, Nhận: ${totalWin})\n`;
+                            resultText += `<@${userId}> **thua ${Math.abs(netChange)} xu**! (Đặt: ${totalBet}, Nhận: ${totalWin})\n`;
                         } else {
-                            resultText += `⚖️ <@${userId}> **hòa!** (Đặt: ${totalBet}, Nhận: ${totalWin})\n`;
+                            resultText += `<@${userId}> **hòa!** (Đặt: ${totalBet}, Nhận: ${totalWin})\n`;
                         }
                     }
 

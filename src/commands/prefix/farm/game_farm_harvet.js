@@ -19,10 +19,10 @@ module.exports = {
         let newCrops = [];
 
         for (let crop of farm.crops) {
-            let growTimeMs = crop.harvestTime; // Chuyển đổi thành mili giây
+            let growTimeMs = crop.harvestTime; 
             let plantedAt = new Date(crop.plantedAt).getTime();
             let elapsedTime = now - plantedAt;
-            let damageTime = growTimeMs + 60 * 60 * 1000; // Nếu quá 1 tiếng lần thời gian thu hoạch thì cây bị sâu
+            let damageTime = growTimeMs + 60 * 60 * 1000; 
 
             if (elapsedTime >= damageTime) {
                 removedCrops.push(crop.name);
@@ -31,18 +31,17 @@ module.exports = {
 
             if (elapsedTime >= growTimeMs) {
                 harvestedCrops.push(crop.name);
-                if (!user.storage) user.storage = {}; // Đảm bảo storage tồn tại
+                if (!user.storage) user.storage = {}; 
                 user.storage.set(crop.name, (user.storage.get(crop.name) || 0) + 1);
             } else {
                 newCrops.push(crop);
             }
         }
-        // Cập nhật farm, loại bỏ cây bị sâu
-        farm.crops = newCrops;
-        await user.save();  // Lưu user để cập nhật kho
-        await farm.save();  // Lưu farm để cập nhật cây trồng
 
-        // Thông báo kết quả
+        farm.crops = newCrops;
+        await user.save();  
+        await farm.save();  
+
         let messages = [];
 
         if (harvestedCrops.length > 0) {
