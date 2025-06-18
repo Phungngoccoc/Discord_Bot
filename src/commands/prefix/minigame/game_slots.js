@@ -1,7 +1,7 @@
 const User = require('../../../model/userModel');
 
 module.exports = {
-    name: 's',
+    name: 'slot',
     description: '🎰 Chơi máy đánh bạc với hiệu ứng quay và đặt cược!',
     execute: async (message) => {
         if (message.content.includes('help')) {

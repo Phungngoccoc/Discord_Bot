@@ -1,18 +1,18 @@
 const fs = require('fs');
 const path = require('path');
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: 'help',
-    description: 'Hiển thị danh sách lệnh prefix của bot',
+    data: new SlashCommandBuilder()
+        .setName('help')
+        .setDescription('Hiện trợ giúp về các lệnh của bot'),
 
-    execute: async (message) => {
+    execute: async (interaction) => {
         const prefix = process.env.PREFIX || '!';
-        const basePath = path.join(__dirname, '..'); // Đi lên từ /prefix/other => /prefix
+        const basePath = path.join(__dirname, '..'); // từ /commands/slash/other/help.js => ../slash
 
         const categories = {};
 
-        // Duyệt các thư mục con của `prefix/` (category)
         const categoryDirs = fs.readdirSync(basePath).filter(dir =>
             fs.statSync(path.join(basePath, dir)).isDirectory()
         );
@@ -25,18 +25,17 @@ module.exports = {
                 const filePath = path.join(categoryPath, file);
                 const command = require(filePath);
 
-                if (!command.name) continue;
+                if (!command.data?.name) continue;
 
                 if (!categories[category]) categories[category] = [];
-                categories[category].push(`\`${command.name}\``);
+                categories[category].push(`\`/${command.data.name}\``);
             }
         }
 
-        // Tạo embed trả về danh sách lệnh
         const embed = new EmbedBuilder()
             .setColor('#0099ff')
-            .setAuthor({ name: 'Danh sách lệnh', iconURL: message.author.displayAvatarURL() })
-            .setDescription(`📌 Prefix của bot là \`${prefix}\``);
+            .setAuthor({ name: 'Danh sách lệnh', iconURL: interaction.user.displayAvatarURL() })
+            .setDescription(`📌 Prefix của bot là \`${prefix}\` (chỉ áp dụng cho lệnh prefix)`);
 
         for (const [category, commands] of Object.entries(categories)) {
             embed.addFields({
@@ -46,6 +45,6 @@ module.exports = {
             });
         }
 
-        await message.channel.send({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed] });
     }
 };

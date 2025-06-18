@@ -4,6 +4,7 @@ const User = require("../../../model/userModel");
 module.exports = {
     name: "getmoney",
     description: "Lấy 10 triệu xu",
+    category: "currency",
     execute: async (message) => {
         const userId = message.author.id;
 
