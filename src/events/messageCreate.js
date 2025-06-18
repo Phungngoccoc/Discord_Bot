@@ -35,7 +35,7 @@ module.exports = async (client, message) => {
     if (!command) return;
 
     try {
-        await command.execute(message, args);
+        await command.execute(message, args, message.client);
     } catch (error) {
         console.error(`Lỗi khi thực hiện lệnh ${commandName}:`, error);
         message.reply("Đã xảy ra lỗi khi thực hiện lệnh.");

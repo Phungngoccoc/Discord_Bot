@@ -22,6 +22,7 @@ const rest = new REST({ version: '10' }).setToken(config.token);
     try {
         console.log('🧹 Đang xóa tất cả GUILD commands...');
         await rest.put(Routes.applicationGuildCommands(config.clientId, config.guildId), { body: [] });
+        await rest.put(Routes.applicationCommands(config.clientId), { body: [] });
         console.log('✅ Đã xóa toàn bộ GUILD commands!');
     } catch (error) {
         console.error('❌ Lỗi khi xóa GUILD commands:', error);
