@@ -4,7 +4,7 @@ module.exports = {
     name: 'top',
     description: '🏆 Xem bảng xếp hạng người chơi có nhiều xu nhất!',
     execute: async (message, args, client) => {
-        const topUsers = await User.find().sort({ money: -1 }).limit(5);
+        const topUsers = await User.find().sort({ money: -1 }).limit(20);
         const allUsers = await User.find().sort({ money: -1 });
 
         const authorId = message.author.id;
