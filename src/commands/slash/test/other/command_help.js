@@ -1,12 +1,17 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: 'help',
-    description: 'Hiện trợ giúp về lệnh',
-    execute: async (message) => {
+    data: new SlashCommandBuilder()
+        .setName('help')
+        .setDescription('Hiện trợ giúp về các lệnh của bot'),
+
+    async execute(interaction) {
         const embed = new EmbedBuilder()
             .setColor('#0099ff')
-            .setAuthor({ name: `Danh sách lệnh`, iconURL: message.author.displayAvatarURL() })
+            .setAuthor({
+                name: 'Danh sách lệnh',
+                iconURL: interaction.user.displayAvatarURL(),
+            })
             .setDescription(`Dưới đây là danh sách lệnh của bot. Prefix của bot là ${process.env.PREFIX}`)
             .addFields(
                 {
@@ -26,6 +31,7 @@ module.exports = {
                 }
             );
 
-        await message.channel.send({ embeds: [embed] });
+        // await interaction.reply({ embeds: [embed], flags: 64 }); // ephemeral: chỉ người dùng thấy
+        await interaction.reply({ embeds: [embed] });
     }
 };
