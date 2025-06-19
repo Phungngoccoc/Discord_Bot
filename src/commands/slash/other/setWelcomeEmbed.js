@@ -1,8 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const GuildConfig = require('../../../model/guildConfig');
-
+const { PermissionFlagsBits } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setName('setwelcomeembed')
         .setDescription('Thiết lập embed chào mừng thành viên mới')
         .addStringOption(opt =>
@@ -17,6 +18,12 @@ module.exports = {
             opt.setName('image').setDescription('Ảnh hoặc gif chào mừng (tuỳ chọn)').setRequired(false)),
 
     async execute(interaction) {
+        if (!interaction.member.permissions.has('Administrator')) {
+            return interaction.reply({
+                content: 'Bạn cần quyền **Quản trị viên (Administrator)** để dùng lệnh này.',
+                flags: 64
+            });
+        }
         const guildId = interaction.guild.id;
         const title = interaction.options.getString('title');
         const color = interaction.options.getString('color');

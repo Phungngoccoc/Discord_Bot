@@ -1,8 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const GuildConfig = require('../../../model/guildConfig');
-
+const { PermissionFlagsBits } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setName('previewwelcomeembed')
         .setDescription('Xem thử embed chào mừng hiện tại của server'),
 
