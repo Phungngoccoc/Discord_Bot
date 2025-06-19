@@ -1,27 +1,25 @@
 const { EmbedBuilder } = require("discord.js");
-const Question = require("../../../model/questionModel"); // Model câu hỏi
-const User = require("../../../model/userModel"); // Model người dùng
+const Question = require("../../../model/questionModel"); 
+const User = require("../../../model/userModel"); 
 
 module.exports = {
     name: "quiz",
     execute: async (message, args) => {
         try {
-            // Lấy ngẫu nhiên 1 câu hỏi từ MongoDB
             const questionCount = await Question.countDocuments();
             if (questionCount === 0) {
-                return message.channel.send("❌ Không có câu hỏi nào trong cơ sở dữ liệu!");
+                return message.channel.send("Không có câu hỏi nào trong cơ sở dữ liệu!");
             }
 
             const randomIndex = Math.floor(Math.random() * questionCount);
             const randomQuestion = await Question.findOne().skip(randomIndex);
 
             if (!randomQuestion) {
-                return message.channel.send("❌ Lỗi khi lấy câu hỏi!");
+                return message.channel.send("Lỗi khi lấy câu hỏi!");
             }
 
             const { question, options, correctIndex } = randomQuestion;
-            let answered = false; // ✅ Theo dõi trạng thái trả lời
-
+            let answered = false; 
             const embed = new EmbedBuilder()
                 .setColor(0x0099ff)
                 .setTitle("🎓 Câu hỏi trắc nghiệm!")
@@ -30,7 +28,6 @@ module.exports = {
 
             message.channel.send({ embeds: [embed] });
 
-            // Tạo bộ lọc để kiểm tra câu trả lời
             const filter = (response) => {
                 return (
                     response.author.id === message.author.id &&
@@ -38,35 +35,31 @@ module.exports = {
                 );
             };
 
-            // Chờ người dùng trả lời trong 10 giây
             const collector = message.channel.createMessageCollector({ filter, time: 10000 });
 
             collector.on("collect", async (response) => {
-                if (answered) return; // Nếu đã trả lời trước đó, không làm gì cả
-                answered = true; // Đánh dấu đã trả lời
+                if (answered) return;
+                answered = true; 
 
-                const userAnswer = parseInt(response.content, 10) - 1; // Chuyển đổi về index (0-3)
+                const userAnswer = parseInt(response.content, 10) - 1; 
 
                 if (userAnswer === correctIndex) {
-                    // ✅ Trả lời đúng -> Cộng 100 xu
                     const userId = response.author.id;
                     let user = await User.findOne({ userId });
 
                     if (!user) {
-                        // Nếu người chơi chưa có trong database, tạo mới
                         user = new User(userId, { money: 100 });
                     } else {
-                        // Nếu đã có, cập nhật số xu
                         user.money += 100;
                     }
 
-                    await user.save(); // Lưu vào database
+                    await user.save(); 
                     message.channel.send(`✅ Đúng rồi! Bạn nhận được **100 xu**. Tổng xu hiện tại: **${user.money} xu**`);
                 } else {
                     message.channel.send(`❌ Sai rồi! Đáp án đúng là: **${options[correctIndex]}**`);
                 }
 
-                collector.stop(); // Dừng collector
+                collector.stop(); 
             });
 
             collector.on("end", (collected) => {

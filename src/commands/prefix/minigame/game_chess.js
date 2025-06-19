@@ -10,23 +10,20 @@ module.exports = {
         const userId = message.author.id;
         let game = games.get(userId);
 
-        const content = message.content.trim(); // Lấy nội dung tin nhắn
-        const args = content.split(/\s+/); // Tách chuỗi theo dấu cách
-        const move = args[1] || ""; // Lấy nước đi từ tham số thứ hai
+        const content = message.content.trim(); 
+        const args = content.split(/\s+/); 
+        const move = args[1] || ""; 
 
-        // Nếu người chơi chỉ nhập "!chess" -> bắt đầu ván cờ mới
         if (!game) {
             game = new Chess();
             games.set(userId, game);
             return message.reply(`♟️ **Ván cờ mới đã bắt đầu!** Hãy nhập nước đi (VD: \`kchess e2e4\`)\n${renderBoard(game)}`);
         }
 
-        // Nếu người chơi chỉ nhập "!chess", hiển thị bàn cờ
         if (!move) {
             return message.reply(`♟️ **Bàn cờ hiện tại:**\n${renderBoard(game)}`);
         }
 
-        // Xử lý di chuyển quân cờ
         try {
             const result = game.move(move, { sloppy: true });
 

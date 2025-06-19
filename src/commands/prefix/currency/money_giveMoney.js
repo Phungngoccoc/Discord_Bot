@@ -31,15 +31,15 @@ module.exports = {
             .setTitle(`${sender.username}, bạn sắp chuyển tiền cho ${receiver.username}`)
             .setDescription(`Bạn sẽ chuyển **${amount} xu** cho <@${receiver.id}>.`)
             .addFields(
-                { name: "🔹 Người gửi:", value: `<@${sender.id}>`, inline: true },
-                { name: "🔹 Người nhận:", value: `<@${receiver.id}>`, inline: true },
-                { name: "💰 Số tiền:", value: `**${amount} xu**`, inline: false }
+                { name: "Người gửi:", value: `<@${sender.id}>`, inline: true },
+                { name: "Người nhận:", value: `<@${receiver.id}>`, inline: true },
+                { name: "Số tiền:", value: `**${amount} xu**`, inline: false }
             )
             .setFooter({ text: "Nhấn ✅ để xác nhận hoặc ❌ để hủy." });
 
         const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("confirm").setLabel("✅ Confirm").setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId("cancel").setLabel("❌ Cancel").setStyle(ButtonStyle.Danger)
+            new ButtonBuilder().setCustomId("confirm").setLabel("✅ Xác nhận").setStyle(ButtonStyle.Success),
+            new ButtonBuilder().setCustomId("cancel").setLabel("❌ Hủy").setStyle(ButtonStyle.Danger)
         );
 
         let confirmMsg = await message.channel.send({ embeds: [embed], components: [row] });

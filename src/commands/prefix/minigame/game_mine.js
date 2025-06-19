@@ -6,7 +6,6 @@ module.exports = {
     execute: async (message) => {
         const userId = message.author.id;
 
-        // Tạo người chơi nếu chưa có trong DB
         let user = await User.findOne({ userId });
         if (!user) {
             user = new User({ userId, money: 0, lastMine: 0 });
@@ -14,26 +13,22 @@ module.exports = {
         }
 
         const now = Date.now();
-        const cooldown = 30 * 60 * 1000; // 30 phút
+        const cooldown = 30 * 60 * 1000; 
 
-        // if (user.lastMine && now - user.lastMine < cooldown) {
-        //     const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
-        //     return message.reply(`⏳ Bạn phải chờ ${remainingTime} phút nữa mới có thể đào tiếp!`); a
-        // }
+        if (user.lastMine && now - user.lastMine < cooldown) {
+            const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
+            return message.reply(`Bạn phải chờ ${remainingTime} phút nữa mới có thể đào tiếp!`); a
+        }
 
-        // Cập nhật thời gian đào cuối cùng
         user.lastMine = now;
         await user.save();
 
-        // Tạo mỏ với 9 ô (đá, vàng, kim cương, rỗng, bẫy)
         const rewards = ["💎", "💰", "🏆", "🏆", "📜", "📜", "💀", "💀", "💀"];
-        const values = [500, 200, 100, 100, 50, 50, -100, -100, -100]; // Giá trị tương ứng
+        const values = [500, 200, 100, 100, 50, 50, -100, -100, -100]; 
 
-        // Xáo trộn phần thưởng
         const shuffledRewards = rewards.map((item, index) => ({ item, value: values[index] }))
             .sort(() => Math.random() - 0.5);
 
-        // Tạo 9 nút bấm
         const buttons = shuffledRewards.map((_, index) => new ButtonBuilder()
             .setCustomId(`mine_${index}`)
             .setLabel("⛏️")
@@ -52,9 +47,8 @@ module.exports = {
 
         const msg = await message.channel.send({ embeds: [embed], components: rows });
 
-        let attempts = 3; // Số lần đào còn lại
+        let attempts = 3; 
 
-        // Bộ thu thập phản hồi
         const collector = msg.createMessageComponentCollector({ time: 60000 });
 
         collector.on("collect", async (interaction) => {
@@ -66,22 +60,17 @@ module.exports = {
                 return interaction.reply({ content: "Bạn đã hết lượt đào!", ephemeral: true });
             }
 
-            // Lấy vị trí đào
             const index = parseInt(interaction.customId.split("_")[1], 10);
             const { item, value } = shuffledRewards[index];
 
-            // Cập nhật tiền của người chơi
             user.money += value;
-            if (user.money < 0) user.money = 0; // Không cho âm tiền
+            if (user.money < 0) user.money = 0; 
             await user.save();
 
-            // Cập nhật nút bấm
             buttons[index].setLabel(item).setStyle(ButtonStyle.Primary).setDisabled(true);
 
-            // Giảm số lượt đào
             attempts--;
 
-            // Cập nhật embed
             embed.setDescription(`Bạn đào được **${item}** (${value} xu)\n\nLượt còn lại: **${attempts}**`);
             if (attempts === 0) {
                 embed.addFields({ name: "💰 Tổng xu của bạn:", value: `${user.money} xu`, inline: true });

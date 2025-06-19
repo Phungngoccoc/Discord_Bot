@@ -15,7 +15,6 @@ module.exports = {
 
         await interaction.deferReply();
 
-        // Khởi tạo bàn cờ
         const board = Array(9).fill(null);
         let currentPlayer = 'X';
         const players = { X: interaction.user, O: null };
@@ -25,7 +24,6 @@ module.exports = {
             .setDescription(`Lượt đi của: ${players.X.tag} (X)`)
             .setColor(0x00AE86);
 
-        // Tạo giao diện bàn cờ bằng các nút
         const createBoard = () => {
             const rows = [];
             for (let i = 0; i < 3; i++) {
@@ -45,14 +43,12 @@ module.exports = {
             return rows;
         };
 
-        // Gửi tin nhắn bắt đầu trò chơi
         const message = await interaction.followUp({
             content: `🎲 Trò chơi bắt đầu!`,
             embeds: [embed],
             components: createBoard()
         });
 
-        // Tạo collector để nhận tương tác từ người chơi
         const collector = message.createMessageComponentCollector({
             filter: (i) => {
                 if (!players.O && i.user.id !== players.X.id) {
@@ -90,7 +86,6 @@ module.exports = {
             if (winner) {
                 embed.setDescription(`🎉 Người thắng: ${players[winner].tag} (${winner})`);
 
-                // 🛑 Dừng collector khi có người thắng
                 collector.stop("winner");
             } else {
                 embed.setDescription(`Lượt đi của: ${players[currentPlayer]?.tag || 'Chờ'} (${currentPlayer})`);
@@ -102,9 +97,8 @@ module.exports = {
             });
         });
 
-        // Khi collector kết thúc
         collector.on('end', async (_, reason) => {
-            if (reason === "winner") return; // Nếu có người thắng, không thông báo hết thời gian
+            if (reason === "winner") return; 
 
             embed.setDescription("⏰ Trò chơi kết thúc do hết thời gian!");
             await interaction.editReply({
@@ -113,7 +107,6 @@ module.exports = {
             });
         });
 
-        // Hàm kiểm tra người thắng
         function checkWinner() {
             const winningCombos = [
                 [0, 1, 2], [3, 4, 5], [6, 7, 8],

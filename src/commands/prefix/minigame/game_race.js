@@ -7,7 +7,6 @@ module.exports = {
     execute: async (message, args) => {
         const userId = message.author.id;
         const userData = await getUserData(userId);
-        // Get the bet amount from args (default to 100 if no amount is provided)
         const betAmount = args.length > 0 && !isNaN(args[0]) ? parseInt(args[0]) : 1;
         if (betAmount <= 0) {
             return message.reply('Vui lòng nhập số tiền hợp lệ để đặt cược!');
@@ -71,7 +70,6 @@ module.exports = {
                     embed.setDescription(`🏁 ${winner} đã về đích trước!\n${resultMessage}`);
                     await msg.edit({ embeds: [embed] });
 
-                    // Update user data if they win or lose
                     if (userChoice === winnerIndex) {
                         const userData = await getUserData(userId);
                         await updateUserData(userId, { money: userData.money + betAmount });

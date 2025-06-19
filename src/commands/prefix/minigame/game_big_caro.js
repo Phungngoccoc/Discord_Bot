@@ -105,10 +105,10 @@ module.exports = {
 
         function checkWinner(index) {
             const directions = [
-                [1, -1],   // Ngang
-                [size, -size],  // Dọc
-                [size + 1, -(size + 1)], // Chéo chính
-                [size - 1, -(size - 1)]  // Chéo phụ
+                [1, -1],   
+                [size, -size],  
+                [size + 1, -(size + 1)], 
+                [size - 1, -(size - 1)]  
             ];
 
             for (const [dir1, dir2] of directions) {

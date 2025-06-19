@@ -44,16 +44,16 @@ module.exports = {
                     deck.push({ value, suit });
                 }
             }
-            return deck.sort(() => Math.random() - 0.5); // Trộn bài ngẫu nhiên
+            return deck.sort(() => Math.random() - 0.5); 
         };
 
         let deck = createDeck();
 
-        const drawCard = () => deck.pop(); // Rút một lá từ bộ bài
+        const drawCard = () => deck.pop(); 
 
         const getCardValue = (card) => {
             if (['J', 'Q', 'K'].includes(card.value)) return 10;
-            if (card.value === 'A') return 11; // Mặc định A là 11, sẽ tính lại sau
+            if (card.value === 'A') return 11;
             return parseInt(card.value);
         };
 
@@ -62,7 +62,7 @@ module.exports = {
             let aceCount = cards.filter(card => card.value === 'A').length;
 
             while (total > 21 && aceCount > 0) {
-                total -= 10; // Chuyển A từ 11 thành 1
+                total -= 10; 
                 aceCount--;
             }
 

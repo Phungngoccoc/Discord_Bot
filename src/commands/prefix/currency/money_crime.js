@@ -2,7 +2,7 @@ const User = require('../../../model/userModel');
 
 module.exports = {
     name: 'crime',
-    description: '🎰 Thử vận may với việc phạm tội (có thể mất tiền)',
+    description: 'Thử vận may với việc phạm tội (có thể mất tiền)',
     execute: async (message) => {
         const userId = message.author.id;
         const now = Date.now();
@@ -18,7 +18,7 @@ module.exports = {
                 const remainingTime = cooldownTime - (now - user.lastCrime);
                 const hours = Math.floor(remainingTime / (60 * 60 * 1000));
                 const minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
-                return message.reply(`⏳ Bạn phải mất ${hours} giờ ${minutes} phút nữa để lên kế hoạch phạm tội!`);
+                return message.reply(`Bạn phải mất ${hours} giờ ${minutes} phút nữa để lên kế hoạch phạm tội!`);
             }
 
             const chance = Math.random();

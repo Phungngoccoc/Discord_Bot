@@ -19,7 +19,6 @@ module.exports = {
         const loadingIcon = '<a:slot:1338518091973263443>';
         const username = message.author?.globalName || message.author.username;
         ;
-        // Lấy số tiền cược
         const match = message.content.match(/\d+/);
         let betAmount = match && !isNaN(match[0]) ? parseInt(match[0]) : 1;
 
@@ -35,15 +34,12 @@ module.exports = {
             return message.reply(`Số tiền cược không hợp lệ! Bạn chỉ có ${user.money} xu.`);
         }
 
-        // Khởi tạo slot ban đầu
         let slots = [null, null, null];
 
-        // Gửi tin nhắn đầu
         let msg = await message.reply(` **  \`___SLOTS___\`**\n\` \` ${loadingIcon} ${loadingIcon} ${loadingIcon} \` \` ${username} cược ${betAmount} xu\n  \`|         |\`\n  \`|         |\``);
 
         const spinSlot = () => symbols[Math.floor(Math.random() * symbols.length)];
 
-        // Hiệu ứng quay từng ô
         for (let i = 0; i < 3; i++) {
             await new Promise(resolve => setTimeout(resolve, 800));
             slots[i] = spinSlot();
@@ -52,7 +48,6 @@ module.exports = {
             await msg.edit(` **  \`___SLOTS___\`**\n\` \` ${display} \` \` ${username} cược ${betAmount} xu\n  \`|         |\`\n  \`|         |\``);
         }
 
-        // Tính kết quả
         const [a, b, c] = slots;
         let winnings = 0;
 
@@ -77,7 +72,6 @@ module.exports = {
 
         await user.save();
 
-        // Hiển thị kết quả cuối cùng
         await msg.edit(` **  \`___SLOTS___\`**\n\` \` ${slots.join(' ')} \` \` ${username} cược ${betAmount} xu\n  \`|         |\`  ${resultMessage}\n  \`|         |\``);
     }
 };

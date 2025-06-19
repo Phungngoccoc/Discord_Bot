@@ -52,6 +52,6 @@ module.exports = {
         await user.save();
         await farm.save();
 
-        message.reply(`🌱 Bạn đã mua **${quantity}** hạt giống **${seedName}** với giá **${totalCost} xu**!`);
+        message.reply(`Bạn đã mua **${quantity}** hạt giống **${seedName}** với giá **${totalCost} xu**!`);
     },
 };

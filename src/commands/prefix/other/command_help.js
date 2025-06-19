@@ -8,11 +8,10 @@ module.exports = {
 
     execute: async (message) => {
         const prefix = process.env.PREFIX || '!';
-        const basePath = path.join(__dirname, '..'); // Đi lên từ /prefix/other => /prefix
+        const basePath = path.join(__dirname, '..'); 
 
         const categories = {};
 
-        // Duyệt các thư mục con của `prefix/` (category)
         const categoryDirs = fs.readdirSync(basePath).filter(dir =>
             fs.statSync(path.join(basePath, dir)).isDirectory()
         );
@@ -32,7 +31,6 @@ module.exports = {
             }
         }
 
-        // Tạo embed trả về danh sách lệnh
         const embed = new EmbedBuilder()
             .setColor('#0099ff')
             .setAuthor({ name: 'Danh sách lệnh', iconURL: message.author.displayAvatarURL() })

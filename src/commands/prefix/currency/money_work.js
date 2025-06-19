@@ -2,7 +2,7 @@ const User = require('../../../model/userModel');
 
 module.exports = {
     name: 'work',
-    description: '💼 Kiếm tiền mỗi 6 giờ!',
+    description: 'Kiếm tiền mỗi 6 giờ!',
     execute: async (message) => {
         const userId = message.author.id;
         const now = Date.now();

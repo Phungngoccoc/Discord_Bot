@@ -33,6 +33,6 @@ module.exports = {
         user.money += totalEarnings;
         await user.save();
 
-        message.reply(`🛒 **Bán nông sản thành công!**\n${sellDetails.join("\n")}\n\n💵 Tổng tiền nhận được: **${totalEarnings} xu**`);
+        message.reply(`**Bán nông sản thành công!**\n${sellDetails.join("\n")}\n\n💵 Tổng tiền nhận được: **${totalEarnings} xu**`);
     },
 };

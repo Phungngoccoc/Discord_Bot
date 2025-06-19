@@ -2,7 +2,7 @@ const { setImageChannel } = require('../../../service/imageChannelService');
 
 module.exports = {
     name: 'setimagechannel',
-    description: '📸 Đặt kênh để bot gửi ảnh khi ai đó nhắn "image"',
+    description: 'Đặt kênh để bot gửi ảnh khi ai đó nhắn "image"',
     execute: async (message) => {
         if (!message.member.permissions.has('Administrator')) {
             return message.reply('Bạn cần quyền **Admin** để dùng lệnh này.');

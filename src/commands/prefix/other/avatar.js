@@ -5,11 +5,9 @@ module.exports = {
     execute: async (message, args) => {
         let targetUser;
 
-        // Nếu có tag (mention)
         if (message.mentions.users.size > 0) {
             targetUser = message.mentions.users.first();
         }
-        // Nếu có truyền ID
         else if (args[0]) {
             try {
                 targetUser = await message.client.users.fetch(args[0]);
@@ -17,7 +15,6 @@ module.exports = {
                 return message.channel.send('Không tìm thấy người dùng.');
             }
         }
-        // Nếu không truyền gì, lấy chính người gửi
         else {
             targetUser = message.author;
         }

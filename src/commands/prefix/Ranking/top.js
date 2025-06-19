@@ -11,7 +11,6 @@ module.exports = {
         const userRank = allUsers.findIndex(u => u.userId === authorId) + 1;
         const user = await User.findOne({ userId: authorId });
 
-        // Bắt đầu leaderboard với 4 backticks
         let leaderboard = `\`\`\`\n< Top 5 Bảng Xếp Hạng Xu >\n`;
         leaderboard += `> Rank của bạn: ${userRank > 0 ? userRank : 'Chưa có'}\n`;
         leaderboard += `>     Số xu: ${user?.money?.toLocaleString() || 0}\n\n`;
@@ -30,7 +29,7 @@ module.exports = {
             leaderboard += `#${i + 1}   @${username}\n       Xu: ${u.money.toLocaleString()}\n`;
         }
 
-        leaderboard += `${new Date().toLocaleString('vi-VN')}\n\`\`\``; // Kết thúc với 4 backticks
+        leaderboard += `${new Date().toLocaleString('vi-VN')}\n\`\`\``; 
 
         message.channel.send(leaderboard);
     }

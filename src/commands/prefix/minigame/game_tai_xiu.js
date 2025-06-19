@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js");
 const { getUserData, updateUserData } = require("../../../service/userService");
 
-let gameRunning = false; // Biến kiểm tra trạng thái game
+let gameRunning = false;
 
 module.exports = {
     name: "tx",
@@ -13,7 +13,7 @@ module.exports = {
                 return message.reply("⚠️ Hiện tại đang có một ván Tài Xỉu diễn ra. Vui lòng chờ kết thúc trước khi bắt đầu ván mới!");
             }
 
-            gameRunning = true; // Đánh dấu game đang chạy
+            gameRunning = true; 
 
             const embed = new Discord.EmbedBuilder()
                 .setColor("#ffcc00")
@@ -71,17 +71,17 @@ module.exports = {
                     const betAmount = parseInt(interaction.fields.getTextInputValue("bet_amount"));
 
                     if (isNaN(betAmount) || betAmount <= 0) {
-                        return interaction.reply({ content: "⚠️ Số tiền cược không hợp lệ!", ephemeral: true });
+                        return interaction.reply({ content: "Số tiền cược không hợp lệ!", ephemeral: true });
                     }
 
                     const userData = await getUserData(userId);
                     if (!userData || isNaN(userData.money) || userData.money < betAmount) {
-                        return interaction.reply({ content: "❌ Bạn không có đủ tiền để đặt cược!", ephemeral: true });
+                        return interaction.reply({ content: "Bạn không có đủ tiền để đặt cược!", ephemeral: true });
                     }
 
                     const choice = userChoices.get(userId);
                     bets.set(userId, { choice, amount: betAmount });
-                    await interaction.reply({ content: `✅ Bạn đã đặt cược **${betAmount}** xu vào **${choice}**!`, ephemeral: true });
+                    await interaction.reply({ content: `Bạn đã đặt cược **${betAmount}** xu vào **${choice}**!`, ephemeral: true });
                 } catch (error) {
                     console.error("Lỗi khi xử lý đặt cược:", error);
                 }
@@ -133,7 +133,7 @@ module.exports = {
                 } catch (error) {
                     console.error("Lỗi khi xử lý kết quả trò chơi:", error);
                 } finally {
-                    gameRunning = false; // Kết thúc game
+                    gameRunning = false; 
                 }
             });
         } catch (error) {

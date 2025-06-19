@@ -58,10 +58,10 @@ module.exports = {
                 landGrid[index] = "🌿"; 
             } else if (elapsedTime < damageTime) {
                 landGrid[index] = crops[crop.name].emoji;
-                status = "✅ Có thể thu hoạch ngay!";
+                status = "Có thể thu hoạch ngay!";
             } else {
                 landGrid[index] = "🐛"; 
-                status = "❌ Bị sâu!";
+                status = "Bị sâu!";
             }
 
             if (elapsedTime >= fullGrowthTime) timeLeft = 0;

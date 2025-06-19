@@ -2,7 +2,7 @@ const User = require('../../../model/userModel');
 
 module.exports = {
     name: 'money',
-    description: '💰 Xem số tiền của bạn hoặc của người khác!',
+    description: 'Xem số tiền của bạn hoặc của người khác!',
     execute: async (message) => {
         const mention = message.mentions.users.first();
         const targetId = mention ? mention.id : message.author.id;
