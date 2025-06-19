@@ -55,6 +55,6 @@ module.exports = {
             components: [row],
         });
 
-        await interaction.reply({ content: `✅ Đã gửi Select Menu vào ${channel}`, ephemeral: true });
+        await interaction.reply({ content: `Đã gửi Select Menu vào ${channel}`, ephemeral: true });
     },
 };

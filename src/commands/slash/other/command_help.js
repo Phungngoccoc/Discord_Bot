@@ -9,7 +9,7 @@ module.exports = {
 
     execute: async (interaction) => {
         const prefix = process.env.PREFIX || '!';
-        const basePath = path.join(__dirname, '..'); // từ /commands/slash/other/help.js => ../slash
+        const basePath = path.join(__dirname, '..'); 
 
         const categories = {};
 

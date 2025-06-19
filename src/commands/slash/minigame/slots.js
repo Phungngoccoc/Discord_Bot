@@ -34,7 +34,7 @@ module.exports = {
 
         if (betAmount <= 0 || betAmount > user.money) {
             return interaction.reply({
-                content: `❌ Số tiền cược không hợp lệ! Bạn chỉ có ${user.money} xu.`,
+                content: `Số tiền cược không hợp lệ! Bạn chỉ có ${user.money} xu.`,
                 ephemeral: true,
             });
         }
