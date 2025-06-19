@@ -36,7 +36,13 @@ function hasNextWord(word, usedWords) {
 
 function isEligibleWord(word) {
     const parts = word.trim().split(/\s+/);
-    return parts.length === 2;
+
+    // Kiểm tra đúng 2 âm tiết
+    if (parts.length !== 2) return false;
+
+    // Kiểm tra ký tự đặc biệt hoặc số
+    const validPattern = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểẾỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸỳỵỷỹ\s]+$/;
+    return validPattern.test(word);
 }
 
 module.exports = {
@@ -56,7 +62,7 @@ module.exports = {
             usedWords: new Set()
         };
 
-        message.reply('🚀 Trò chơi nối từ đã bắt đầu! Hãy nhập từ đầu tiên.');
+        message.channel.send('Trò chơi nối từ đã bắt đầu! Hãy nhập từ đầu tiên.');
     },
 
     async onMessage(message) {
@@ -93,7 +99,7 @@ module.exports = {
             if (!canContinue) {
                 state.started = false;
                 await message.react('❌');
-                return await message.channel.send(`❌ Không thể bắt đầu bằng từ này vì không thể nối tiếp. Trò chơi kết thúc.`);
+                return await message.channel.send(`Không thể nối tiếp. Trò chơi kết thúc.`);
             }
             state.currentWord = word;
             state.usedWords.add(word);

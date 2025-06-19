@@ -4,7 +4,7 @@ const User = require('../../../model/userModel');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('top')
-        .setDescription('🏆 Xem bảng xếp hạng người chơi có nhiều xu nhất!'),
+        .setDescription('Xem bảng xếp hạng người chơi có nhiều xu nhất!'),
 
     async execute(interaction) {
         await interaction.deferReply(); // Tránh timeout nếu truy vấn lâu
