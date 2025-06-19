@@ -6,6 +6,15 @@ module.exports = (client) => {
     // client.guilds.cache.forEach(guild => {
     //     console.log(`- ${guild.name} (${guild.id}) | Members: ${guild.memberCount}`);
     // });
+    // client.guilds.fetch('1288430788488200234')
+    //     .then(guild => {
+    //         guild.leave().then(() => {
+    //             console.log(`Đã rời khỏi guild: ${guild.name} (${guild.id})`);
+    //         }).catch(console.error);
+    //     })
+    //     .catch(err => {
+    //         console.error('Không tìm thấy guild:', err);
+    //     });
     // Set activity cho bot
     client.user.setActivity({
         name: "saygex",
