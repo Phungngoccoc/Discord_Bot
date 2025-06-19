@@ -1,12 +1,15 @@
 const config = require("../config/config.js");
 const sendImageByConfig = require('../utils/sendImage');
 const { EmbedBuilder } = require('discord.js');
+const noituStart = require('../commands/prefix/Wordgame/start');
+
 module.exports = async (client, message) => {
     if (message.content.trim().toLowerCase() === 'seg' || message.content.trim().toLowerCase() === 'girl'
         || message.content.trim().toLowerCase() === 'femboy' || message.content.trim().toLowerCase() === 'futa') {
         await sendImageByConfig(message);
         return;
     }
+
     if (
         message.content.trim() === `<@${message.client.user.id}>` ||
         message.content.trim() === `<@!${message.client.user.id}>`
@@ -25,7 +28,18 @@ module.exports = async (client, message) => {
             );
 
         await message.channel.send({ embeds: [embed] });
+        return;
     }
+
+    // React nối từ
+    try {
+        if (typeof noituStart.onMessage === 'function') {
+            await noituStart.onMessage(message);
+        }
+    } catch (err) {
+        console.error('Lỗi khi xử lý nối từ:', err);
+    }
+
     if (message.author.bot || !message.content.startsWith(config.prefix)) return;
 
     const args = message.content.slice(config.prefix.length).trim().split(/ +/);
