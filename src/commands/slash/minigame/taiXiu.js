@@ -1,26 +1,31 @@
 const {
+    SlashCommandBuilder,
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    EmbedBuilder,
     ModalBuilder,
     TextInputBuilder,
     TextInputStyle,
+    EmbedBuilder,
     Events,
 } = require('discord.js');
 const { getUserData, updateUserData } = require('../../../service/userService');
 
-let gameRunning = new Set(); // hỗ trợ nhiều kênh chơi song song
+let gameRunning = new Set(); // Hỗ trợ nhiều kênh cùng lúc
 
 module.exports = {
-    name: 'tx',
-    description: 'Chơi Tài Xỉu bằng cách đặt cược!',
+    data: new SlashCommandBuilder()
+        .setName('tx')
+        .setDescription('🎲 Chơi Tài Xỉu! Đặt cược và chờ kết quả!'),
 
-    async execute(message) {
-        const channelId = message.channel.id;
+    async execute(interaction) {
+        const channelId = interaction.channel.id;
 
         if (gameRunning.has(channelId)) {
-            return message.reply('⚠️ Ván Tài Xỉu đang diễn ra trong kênh này. Vui lòng chờ kết thúc!');
+            return interaction.reply({
+                content: '⚠️ Hiện tại đang có một ván Tài Xỉu diễn ra trong kênh này!',
+                ephemeral: true,
+            });
         }
 
         gameRunning.add(channelId);
@@ -28,7 +33,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor('#ffcc00')
             .setTitle('🎲 Chơi Tài Xỉu 🎲')
-            .setDescription('Nhấn nút để đặt cược **Tài** hoặc **Xỉu**! Bạn có **15 giây**.')
+            .setDescription('Nhấn nút để đặt cược **Tài** hoặc **Xỉu**! Bạn có **15 giây** để tham gia.')
             .setFooter({ text: 'Dưới 10 là Xỉu, từ 10 trở lên là Tài.' });
 
         const row = new ActionRowBuilder().addComponents(
@@ -36,10 +41,11 @@ module.exports = {
             new ButtonBuilder().setCustomId('bet_xiu').setLabel('Xỉu').setStyle(ButtonStyle.Danger)
         );
 
-        const msg = await message.channel.send({ embeds: [embed], components: [row] });
+        await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+        const msg = await interaction.fetchReply();
 
-        const bets = new Map(); // userId -> { choice, amount }
-        const userChoices = new Map(); // userId -> Tài | Xỉu
+        const bets = new Map();
+        const userChoices = new Map();
 
         const collector = msg.createMessageComponentCollector({
             time: 15000,
@@ -48,8 +54,9 @@ module.exports = {
 
         collector.on('collect', async (i) => {
             const userId = i.user.id;
+
             if (userChoices.has(userId)) {
-                return i.reply({ content: '⚠️ Bạn đã đặt rồi!', ephemeral: true });
+                return i.reply({ content: '⚠️ Bạn đã đặt cược rồi!', ephemeral: true });
             }
 
             const choice = i.customId === 'bet_tai' ? 'Tài' : 'Xỉu';
@@ -71,35 +78,42 @@ module.exports = {
             await i.showModal(modal);
         });
 
-        const modalCollector = message.client.on(Events.InteractionCreate, async (interaction) => {
-            if (!interaction.isModalSubmit()) return;
-            if (!interaction.customId.startsWith('modal_tx_')) return;
+        const modalHandler = async (modalInteraction) => {
+            if (!modalInteraction.isModalSubmit()) return;
+            if (!modalInteraction.customId.startsWith('modal_tx_')) return;
 
-            const userId = interaction.user.id;
-            const betAmount = parseInt(interaction.fields.getTextInputValue('bet_amount'));
+            const userId = modalInteraction.user.id;
             const choice = userChoices.get(userId);
 
-            if (!choice || isNaN(betAmount) || betAmount <= 0) {
-                return interaction.reply({ content: '⚠️ Dữ liệu không hợp lệ!', ephemeral: true });
+            if (!choice) return;
+
+            const betAmount = parseInt(modalInteraction.fields.getTextInputValue('bet_amount'));
+
+            if (isNaN(betAmount) || betAmount <= 0) {
+                return modalInteraction.reply({ content: '⚠️ Số tiền không hợp lệ!', ephemeral: true });
             }
 
             const userData = await getUserData(userId);
             if (!userData || userData.money < betAmount) {
-                return interaction.reply({ content: '💸 Bạn không đủ tiền!', ephemeral: true });
+                return modalInteraction.reply({ content: '💸 Bạn không đủ tiền!', ephemeral: true });
             }
 
             bets.set(userId, { choice, amount: betAmount });
-            await interaction.reply({ content: `✅ Bạn đã cược **${betAmount}** vào **${choice}**`, ephemeral: true });
-        });
+            await modalInteraction.reply({
+                content: `✅ Bạn đã đặt cược **${betAmount} xu** vào **${choice}**!`,
+                ephemeral: true,
+            });
+        };
+
+        interaction.client.on(Events.InteractionCreate, modalHandler);
 
         collector.on('end', async () => {
-            // Bắt đầu tung xúc xắc
-            const loadingEmbed = new EmbedBuilder()
+            const rollingEmbed = new EmbedBuilder()
                 .setColor('#ffcc00')
                 .setTitle('🎲 Tung xúc xắc...')
                 .setDescription('<a:rolling:1228414116725653634> <a:rolling:1228414116725653634> <a:rolling:1228414116725653634>');
 
-            const rollingMsg = await message.channel.send({ embeds: [loadingEmbed] });
+            const rollingMsg = await interaction.channel.send({ embeds: [rollingEmbed] });
             await new Promise((r) => setTimeout(r, 3000));
 
             const dice = Array.from({ length: 3 }, () => Math.floor(Math.random() * 6) + 1);
@@ -107,33 +121,31 @@ module.exports = {
             const result = total >= 10 ? 'Tài' : 'Xỉu';
 
             const emoji = ['<:tx1:1339511294453354530>', '<:tx2:1339511297338769448>', '<:tx3:1339511299368816640>', '<:tx4:1339511301617094657>', '<:tx5:1339511305723318313>', '<:tx6:1339511308554600508>'];
-            const diceDisplay = dice.map((d) => emoji[d - 1]).join(' ');
+            const diceDisplay = dice.map(d => emoji[d - 1]).join(' ');
 
             const resultEmbed = new EmbedBuilder()
                 .setColor('#ffcc00')
-                .setTitle('🎲 Kết quả:')
+                .setTitle('🎲 Kết quả tung xúc xắc')
                 .setDescription(`${diceDisplay}\n\nTổng: **${total}**\n➡️ Kết quả: **${result}**`);
 
             await rollingMsg.edit({ embeds: [resultEmbed] });
 
-            // Trả kết quả từng người
             let summary = '';
-            for (const [userId, bet] of bets) {
+            for (const [userId, bet] of bets.entries()) {
                 const user = await getUserData(userId);
                 if (!user) continue;
 
-                const win = bet.choice === result;
-                const delta = win ? bet.amount : -bet.amount;
-                await updateUserData(userId, { money: user.money + delta });
+                const won = bet.choice === result;
+                const change = won ? bet.amount : -bet.amount;
+                await updateUserData(userId, { money: user.money + change });
 
-                summary += `<@${userId}> ${win ? '🎉 thắng' : '💀 thua'} **${Math.abs(delta)} xu**\n`;
+                summary += `<@${userId}> ${won ? '🎉 thắng' : '💀 thua'} **${Math.abs(change)} xu**\n`;
             }
 
-            if (summary) {
-                await message.channel.send(summary);
-            }
+            if (summary) await interaction.channel.send(summary);
 
             gameRunning.delete(channelId);
+            interaction.client.removeListener(Events.InteractionCreate, modalHandler);
         });
     },
 };
