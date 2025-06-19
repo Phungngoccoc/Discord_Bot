@@ -6,7 +6,7 @@ const { crops } = require('../../../utils/constants');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('harvest')
-        .setDescription('🌾 Thu hoạch cây trồng đã chín và loại bỏ cây bị sâu'),
+        .setDescription('Thu hoạch cây trồng đã chín và loại bỏ cây bị sâu'),
     category: 'farm',
 
     async execute(interaction) {
@@ -16,8 +16,8 @@ module.exports = {
 
         if (!user || !farm) {
             return interaction.reply({
-                content: '🚜 Bạn chưa có trang trại! Dùng lệnh `/farm` để tạo nông trại mới.',
-                ephemeral: true
+                content: 'Bạn chưa có trang trại! Dùng lệnh `/farm` để tạo nông trại mới.',
+                flags: 64
             });
         }
 
@@ -71,7 +71,7 @@ module.exports = {
             const message = Object.entries(summary)
                 .map(([name, count]) => `${crops[name]?.emoji || '🌱'} ${name}: ${count}`)
                 .join('\n');
-            messages.push(`✅ Bạn đã thu hoạch thành công:\n${message}\nĐã được lưu vào kho.`);
+            messages.push(`Bạn đã thu hoạch thành công:\n${message}\nĐã được lưu vào kho.`);
         }
 
         if (removedCrops.length > 0) {
@@ -83,11 +83,11 @@ module.exports = {
             const message = Object.entries(summary)
                 .map(([name, count]) => `🪳 ${name}: ${count} cây bị sâu và bị loại bỏ!`)
                 .join('\n');
-            messages.push(`⚠️ Một số cây đã bị sâu:\n${message}`);
+            messages.push(`Một số cây đã bị sâu:\n${message}`);
         }
 
         if (messages.length === 0) {
-            return interaction.reply('😴 Không có cây nào sẵn sàng để thu hoạch hoặc bị sâu!');
+            return interaction.reply('Không có cây nào sẵn sàng để thu hoạch hoặc bị sâu!');
         }
 
         return interaction.reply(messages.join('\n\n'));

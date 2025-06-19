@@ -10,7 +10,7 @@ const User = require("../../../model/userModel");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("mine")
-        .setDescription("⛏️ Đào mỏ khoáng sản để nhận xu!"),
+        .setDescription("Đào mỏ khoáng sản để nhận xu!"),
 
     async execute(interaction) {
         const userId = interaction.user.id;
@@ -27,8 +27,8 @@ module.exports = {
         if (user.lastMine && now - user.lastMine < cooldown) {
             const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
             return interaction.reply({
-                content: `🕒 Bạn cần chờ **${remainingTime} phút** nữa để đào tiếp!`,
-                ephemeral: true,
+                content: `Bạn cần chờ **${remainingTime} phút** nữa để đào tiếp!`,
+                flags: 64,
             });
         }
 
@@ -69,11 +69,11 @@ module.exports = {
 
         collector.on("collect", async (btn) => {
             if (btn.user.id !== userId) {
-                return btn.reply({ content: "⛔ Bạn không phải người chơi!", ephemeral: true });
+                return btn.reply({ content: "Bạn không phải người chơi!", flags: 64 });
             }
 
             if (attempts <= 0) {
-                return btn.reply({ content: "Bạn đã hết lượt đào!", ephemeral: true });
+                return btn.reply({ content: "Bạn đã hết lượt đào!", flags: 64 });
             }
 
             const index = parseInt(btn.customId.split("_")[1], 10);
@@ -92,7 +92,7 @@ module.exports = {
 
             if (attempts === 0) {
                 embed.addFields({
-                    name: "💰 Tổng xu của bạn:",
+                    name: "Tổng xu của bạn:",
                     value: `${user.money} xu`,
                     inline: true,
                 });

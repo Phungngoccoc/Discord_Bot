@@ -10,7 +10,7 @@ const { getUserData, updateUserData } = require('../../../service/userService');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('race')
-        .setDescription('🚗 Đua xe hoặc đua ngựa! Cược tiền vào người thắng.')
+        .setDescription('Đua xe hoặc đua ngựa! Cược tiền vào người thắng.')
         .addIntegerOption(option =>
             option.setName('bet')
                 .setDescription('Số tiền cược')
@@ -23,9 +23,9 @@ module.exports = {
         const betAmount = interaction.options.getInteger('bet');
 
         if (betAmount <= 0) {
-            return interaction.reply({ content: '⚠️ Vui lòng nhập số tiền hợp lệ để đặt cược!', ephemeral: true });
+            return interaction.reply({ content: '⚠️ Vui lòng nhập số tiền hợp lệ để đặt cược!', flags: 64 });
         } else if (betAmount > userData.money) {
-            return interaction.reply({ content: '💸 Bạn không đủ tiền để đặt cược!', ephemeral: true });
+            return interaction.reply({ content: '💸 Bạn không đủ tiền để đặt cược!', flags: 64 });
         }
 
         const racers = [
@@ -65,7 +65,7 @@ module.exports = {
         collector.on('collect', async (i) => {
             userChoice = parseInt(i.customId.split('_')[1]);
             await i.update({
-                content: `💰 Bạn đã đặt cược **${betAmount}** vào **${racers[userChoice].name}**!`,
+                content: `Bạn đã đặt cược **${betAmount}** vào **${racers[userChoice].name}**!`,
                 components: [],
                 embeds: [],
             });
@@ -95,8 +95,8 @@ module.exports = {
 
                     const won = userChoice === winnerIndex;
                     const resultText = won
-                        ? `🎉 Bạn đã thắng và nhận được **${betAmount * 2} xu**!`
-                        : `😢 Bạn đã thua và mất **${betAmount} xu**!`;
+                        ? `Bạn đã thắng và nhận được **${betAmount * 2} xu**!`
+                        : `Bạn đã thua và mất **${betAmount} xu**!`;
 
                     embed.setDescription(`🏁 **${winner} đã về đích đầu tiên!**\n${resultText}`);
                     await msg.edit({ embeds: [embed] });

@@ -27,12 +27,12 @@ module.exports = {
 
             await config.save();
 
-            return interaction.reply(`✅ Đã đặt kênh log tin nhắn bị xóa là <#${channelId}>`);
+            return interaction.reply(`Đã đặt kênh log tin nhắn bị xóa là <#${channelId}>`);
         } catch (error) {
             console.error('Lỗi khi cài đặt log message channel:', error);
             return interaction.reply({
-                content: '❌ Đã xảy ra lỗi khi lưu cài đặt.',
-                ephemeral: true
+                content: 'Đã xảy ra lỗi khi lưu cài đặt.',
+                flags: 64
             });
         }
     }

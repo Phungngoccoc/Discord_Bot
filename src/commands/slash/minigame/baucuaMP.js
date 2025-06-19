@@ -22,7 +22,7 @@ let playerBets = {};
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('baucua')
-        .setDescription('🎲 Tạo phòng chơi Bầu Cua với nhiều người')
+        .setDescription('Tạo phòng chơi Bầu Cua với nhiều người')
         .addIntegerOption(option =>
             option.setName('tiencuoc')
                 .setDescription('Số tiền cược mỗi lần đặt (mặc định: 1 xu)')
@@ -34,7 +34,7 @@ module.exports = {
 
     async execute(interaction) {
         if (activeGame) {
-            return interaction.reply({ content: '⚠ Một trò chơi đang diễn ra. Vui lòng đợi!', ephemeral: true });
+            return interaction.reply({ content: 'Một trò chơi đang diễn ra. Vui lòng đợi!', flags: 64 });
         }
 
         const betAmount = interaction.options.getInteger('tiencuoc') || 1;
@@ -75,7 +75,7 @@ module.exports = {
 
             const totalCost = selected.length * betAmount;
             if (userData.money < totalCost) {
-                return i.reply({ content: `❌ Bạn không đủ tiền! Cần **${totalCost} xu**, bạn có **${userData.money} xu**.`, ephemeral: true });
+                return i.reply({ content: `Bạn không đủ tiền! Cần **${totalCost} xu**, bạn có **${userData.money} xu**.`, flags: 64 });
             }
 
             // Trừ tiền ngay khi đặt
@@ -94,15 +94,15 @@ module.exports = {
             }
 
             await i.reply({
-                content: `✅ Đặt cược thành công vào: ${selected.map(c => `${emojiMap[c]} ${c}`).join(', ')}\nTổng tiền đã cược: **${Object.entries(playerBets[userId].bets).reduce((s, [k, v]) => s + v, 0)} xu**.`,
-                ephemeral: true
+                content: `Đặt cược thành công vào: ${selected.map(c => `${emojiMap[c]} ${c}`).join(', ')}\nTổng tiền đã cược: **${Object.entries(playerBets[userId].bets).reduce((s, [k, v]) => s + v, 0)} xu**.`,
+                flags: 64
             });
         });
 
         collector.on('end', async () => {
             if (Object.keys(playerBets).length === 0) {
                 activeGame = false;
-                return channel.send('⛔ Không có người tham gia, trò chơi bị hủy.');
+                return channel.send('Không có người tham gia, trò chơi bị hủy.');
             }
 
             // Animation tung xúc xắc
@@ -140,7 +140,7 @@ module.exports = {
 
                     const resultEmbed = new EmbedBuilder()
                         .setTitle('🎉 Kết quả Bầu Cua 🎉')
-                        .setDescription(`👉 ${animationSteps[3]}`)
+                        .setDescription(`${animationSteps[3]}`)
                         .setColor('#00FF00');
 
                     await msg.edit({ embeds: [resultEmbed] });

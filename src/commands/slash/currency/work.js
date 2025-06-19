@@ -4,7 +4,7 @@ const User = require('../../../model/userModel');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('work')
-        .setDescription('🛠️ Kiếm xu mỗi 6 giờ!'),
+        .setDescription('Kiếm xu mỗi 6 giờ!'),
     category: 'currency',
 
     async execute(interaction) {
@@ -31,17 +31,17 @@ module.exports = {
                 const remaining = cooldown - (now - user.lastWorked);
                 const hours = Math.floor(remaining / (60 * 60 * 1000));
                 const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-                return interaction.reply(`🕒 Bạn cần nghỉ ${hours} giờ ${minutes} phút nữa để làm việc tiếp.`);
+                return interaction.reply(`Bạn cần nghỉ ${hours} giờ ${minutes} phút nữa để làm việc tiếp.`);
             }
 
             user.money += reward;
             user.lastWorked = now;
             await user.save();
 
-            await interaction.reply(`💼 Bạn đã đi làm và nhận được **${reward} xu**! Tổng: **${user.money} xu**.`);
+            await interaction.reply(`Bạn đã đi làm và nhận được **${reward} xu**! Tổng: **${user.money} xu**.`);
         } catch (error) {
             console.error('Lỗi khi cập nhật tiền:', error);
-            await interaction.reply('⚠️ Đã xảy ra lỗi khi nhận tiền làm việc.');
+            await interaction.reply('Đã xảy ra lỗi khi nhận tiền làm việc.');
         }
     }
 };

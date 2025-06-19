@@ -4,7 +4,7 @@ const User = require('../../../model/userModel');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('crime')
-        .setDescription('💣 Thử vận may với việc phạm tội (có thể mất tiền)'),
+        .setDescription('Thử vận may với việc phạm tội (có thể mất tiền)'),
     category: 'currency',
 
     async execute(interaction) {
@@ -22,7 +22,7 @@ module.exports = {
                 const remainingTime = cooldownTime - (now - user.lastCrime);
                 const hours = Math.floor(remainingTime / (60 * 60 * 1000));
                 const minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
-                return interaction.reply(`⏳ Bạn cần đợi ${hours} giờ ${minutes} phút nữa để tiếp tục phạm tội!`);
+                return interaction.reply(`Bạn cần đợi ${hours} giờ ${minutes} phút nữa để lên kế hoạch!`);
             }
 
             const chance = Math.random();
@@ -30,17 +30,17 @@ module.exports = {
 
             if (chance < 0.5) {
                 user.money += amount;
-                await interaction.reply(`🤑 Bạn trộm thành công và kiếm được **${amount}** xu!`);
+                await interaction.reply(`Bạn đi ăn trộm thành công và kiếm được **${amount}** xu!`);
             } else {
                 user.money -= amount;
-                await interaction.reply(`🚨 Bạn bị bắt và mất **${amount}** xu khi cố phạm tội!`);
+                await interaction.reply(`Bạn bị bắt và mất **${amount}** xu!`);
             }
 
             user.lastCrime = now;
             await user.save();
         } catch (error) {
             console.error('Lỗi khi xử lý crime:', error);
-            await interaction.reply('⚠️ Đã xảy ra lỗi khi thử vận may phạm tội.');
+            await interaction.reply('Đã xảy ra lỗi khi thử vận may phạm tội.');
         }
     }
 };

@@ -4,7 +4,7 @@ const { crops } = require('../../../utils/constants');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('seed')
-        .setDescription('🌱 Xem danh sách hạt giống có thể mua'),
+        .setDescription('Xem danh sách hạt giống có thể mua'),
     category: 'farm',
 
     async execute(interaction) {

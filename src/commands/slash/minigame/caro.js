@@ -11,7 +11,6 @@ module.exports = {
         .setName('caro')
         .setDescription('Chơi cờ caro (tic-tac-toe) với bạn bè!'),
     async execute(interaction) {
-        console.log(`[DEBUG] Nhận command: /caro từ ${interaction.user.tag}`);
 
         await interaction.deferReply();
 

@@ -5,7 +5,7 @@ const User = require("../../../model/userModel");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("quiz")
-        .setDescription("🎓 Trả lời một câu hỏi trắc nghiệm để nhận xu"),
+        .setDescription("Trả lời một câu hỏi trắc nghiệm để nhận xu"),
 
     async execute(interaction) {
         try {
@@ -49,9 +49,9 @@ module.exports = {
                     }
 
                     await user.save();
-                    msg.reply(`✅ Đúng rồi! Bạn nhận được **100 xu**. Tổng xu hiện tại: **${user.money} xu**`);
+                    msg.reply(`Đúng rồi! Bạn nhận được **100 xu**. Tổng xu hiện tại: **${user.money} xu**`);
                 } else {
-                    msg.reply(`❌ Sai rồi! Đáp án đúng là: **${options[correctIndex]}**`);
+                    msg.reply(`Sai rồi! Đáp án đúng là: **${options[correctIndex]}**`);
                 }
             });
 
@@ -61,8 +61,8 @@ module.exports = {
                 }
             });
         } catch (error) {
-            console.error("❌ Lỗi khi xử lý /quiz:", error);
-            interaction.reply({ content: "⚠️ Có lỗi xảy ra khi xử lý câu hỏi.", ephemeral: true });
+            console.error("Lỗi khi xử lý /quiz:", error);
+            interaction.reply({ content: "⚠️ Có lỗi xảy ra khi xử lý câu hỏi.", flags: 64 });
         }
     },
 };

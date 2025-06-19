@@ -67,14 +67,14 @@ module.exports = {
             if (board[idx]) return;
 
             if (btnInteraction.user.id !== players[currentPlayer].id) {
-                return btnInteraction.reply({ content: "Không phải lượt của bạn!", ephemeral: true });
+                return btnInteraction.reply({ content: "Không phải lượt của bạn!", flags: 64 });
             }
 
             board[idx] = currentPlayer;
             const winner = checkWinner(idx);
 
             if (winner) {
-                embed.setDescription(`🎉 Người thắng: ${players[winner].tag} (${winner})`);
+                embed.setDescription(`Người thắng: ${players[winner].tag} (${winner})`);
                 collector.stop("winner");
             } else {
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';

@@ -16,15 +16,15 @@ let gameRunning = new Set(); // Hỗ trợ nhiều kênh cùng lúc
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('tx')
-        .setDescription('🎲 Chơi Tài Xỉu! Đặt cược và chờ kết quả!'),
+        .setDescription('Chơi Tài Xỉu! Đặt cược và chờ kết quả!'),
 
     async execute(interaction) {
         const channelId = interaction.channel.id;
 
         if (gameRunning.has(channelId)) {
             return interaction.reply({
-                content: '⚠️ Hiện tại đang có một ván Tài Xỉu diễn ra trong kênh này!',
-                ephemeral: true,
+                content: 'Hiện tại đang có một ván Tài Xỉu diễn ra trong kênh này!',
+                flags: 64,
             });
         }
 
@@ -56,7 +56,7 @@ module.exports = {
             const userId = i.user.id;
 
             if (userChoices.has(userId)) {
-                return i.reply({ content: '⚠️ Bạn đã đặt cược rồi!', ephemeral: true });
+                return i.reply({ content: 'Bạn đã đặt cược rồi!', flags: 64 });
             }
 
             const choice = i.customId === 'bet_tai' ? 'Tài' : 'Xỉu';
@@ -90,18 +90,18 @@ module.exports = {
             const betAmount = parseInt(modalInteraction.fields.getTextInputValue('bet_amount'));
 
             if (isNaN(betAmount) || betAmount <= 0) {
-                return modalInteraction.reply({ content: '⚠️ Số tiền không hợp lệ!', ephemeral: true });
+                return modalInteraction.reply({ content: 'Số tiền không hợp lệ!', flags: 64 });
             }
 
             const userData = await getUserData(userId);
             if (!userData || userData.money < betAmount) {
-                return modalInteraction.reply({ content: '💸 Bạn không đủ tiền!', ephemeral: true });
+                return modalInteraction.reply({ content: 'Bạn không đủ tiền!', flags: 64 });
             }
 
             bets.set(userId, { choice, amount: betAmount });
             await modalInteraction.reply({
-                content: `✅ Bạn đã đặt cược **${betAmount} xu** vào **${choice}**!`,
-                ephemeral: true,
+                content: `Bạn đã đặt cược **${betAmount} xu** vào **${choice}**!`,
+                flags: 64,
             });
         };
 
@@ -139,7 +139,7 @@ module.exports = {
                 const change = won ? bet.amount : -bet.amount;
                 await updateUserData(userId, { money: user.money + change });
 
-                summary += `<@${userId}> ${won ? '🎉 thắng' : '💀 thua'} **${Math.abs(change)} xu**\n`;
+                summary += `<@${userId}> ${won ? 'thắng' : 'thua'} **${Math.abs(change)} xu**\n`;
             }
 
             if (summary) await interaction.channel.send(summary);

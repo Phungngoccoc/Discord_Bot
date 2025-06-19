@@ -5,7 +5,7 @@ const User = require('../../../model/userModel');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('storage')
-        .setDescription('📦 Kiểm tra số lượng nông sản trong kho'),
+        .setDescription('Kiểm tra số lượng nông sản trong kho'),
     category: 'farm',
 
     async execute(interaction) {
@@ -14,8 +14,8 @@ module.exports = {
 
         if (!user) {
             return interaction.reply({
-                content: '🚜 Bạn chưa có trang trại! Dùng lệnh `/farm` để tạo nông trại mới.',
-                ephemeral: true
+                content: 'Bạn chưa có trang trại! Dùng lệnh `/farm` để tạo nông trại mới.',
+                flags: 64
             });
         }
 

@@ -13,7 +13,7 @@ module.exports = {
         }
 
         const now = Date.now();
-        const cooldown = 30 * 60 * 1000; 
+        const cooldown = 30 * 60 * 1000;
 
         if (user.lastMine && now - user.lastMine < cooldown) {
             const remainingTime = Math.ceil((cooldown - (now - user.lastMine)) / 60000);
@@ -24,7 +24,7 @@ module.exports = {
         await user.save();
 
         const rewards = ["💎", "💰", "🏆", "🏆", "📜", "📜", "💀", "💀", "💀"];
-        const values = [500, 200, 100, 100, 50, 50, -100, -100, -100]; 
+        const values = [500, 200, 100, 100, 50, 50, -100, -100, -100];
 
         const shuffledRewards = rewards.map((item, index) => ({ item, value: values[index] }))
             .sort(() => Math.random() - 0.5);
@@ -47,24 +47,24 @@ module.exports = {
 
         const msg = await message.channel.send({ embeds: [embed], components: rows });
 
-        let attempts = 3; 
+        let attempts = 3;
 
         const collector = msg.createMessageComponentCollector({ time: 60000 });
 
         collector.on("collect", async (interaction) => {
             if (interaction.user.id !== userId) {
-                return interaction.reply({ content: "Bạn không phải người chơi!", ephemeral: true });
+                return interaction.reply({ content: "Bạn không phải người chơi!", flags: 64 });
             }
 
             if (attempts <= 0) {
-                return interaction.reply({ content: "Bạn đã hết lượt đào!", ephemeral: true });
+                return interaction.reply({ content: "Bạn đã hết lượt đào!", flags: 64 });
             }
 
             const index = parseInt(interaction.customId.split("_")[1], 10);
             const { item, value } = shuffledRewards[index];
 
             user.money += value;
-            if (user.money < 0) user.money = 0; 
+            if (user.money < 0) user.money = 0;
             await user.save();
 
             buttons[index].setLabel(item).setStyle(ButtonStyle.Primary).setDisabled(true);

@@ -14,7 +14,7 @@ const emojiMap = {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('bc1')
-        .setDescription('🎲 Chơi Bầu Cua: đặt cược vào 1 con vật, nếu ra trúng sẽ thắng xu!')
+        .setDescription('Chơi Bầu Cua: đặt cược vào 1 con vật, nếu ra trúng sẽ thắng xu!')
         .addStringOption(option =>
             option.setName('convat')
                 .setDescription('Chọn con vật để đặt cược')
@@ -45,8 +45,8 @@ module.exports = {
 
         if (betAmount > user.money) {
             return interaction.reply({
-                content: '💸 Bạn không đủ tiền để cược số tiền này!',
-                ephemeral: true
+                content: 'Bạn không đủ tiền để cược số tiền này!',
+                flags: 64
             });
         }
 
@@ -69,10 +69,10 @@ module.exports = {
 
         await updateUserData(userId, { money: user.money });
 
-        const resultText = `🎯 **Kết quả:** ${resultsWithEmoji.join(' - ')}\n`;
+        const resultText = `**Kết quả:** ${resultsWithEmoji.join(' - ')}\n`;
         const summary = winCount > 0
-            ? `🎉 Bạn đặt **${betChoice}** và trúng ${winCount} lần → nhận **+${winAmount} xu**!`
-            : `😢 Bạn đặt **${betChoice}** nhưng không trúng → mất **${betAmount} xu**.`;
+            ? `Bạn đặt **${betChoice}** và trúng ${winCount} lần → nhận **+${winAmount} xu**!`
+            : `Bạn đặt **${betChoice}** nhưng không trúng → mất **${betAmount} xu**.`;
 
         return interaction.reply(resultText + summary);
     }

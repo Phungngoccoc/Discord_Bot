@@ -5,7 +5,7 @@ const { crops } = require('../../../utils/constants');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('sell')
-        .setDescription('💰 Bán tất cả nông sản đã thu hoạch để kiếm xu'),
+        .setDescription('Bán tất cả nông sản đã thu hoạch để kiếm xu'),
     category: 'farm',
 
     async execute(interaction) {
@@ -14,8 +14,8 @@ module.exports = {
 
         if (!user || !user.storage || Object.keys(user.storage).length === 0) {
             return interaction.reply({
-                content: '📦 Bạn không có nông sản nào để bán!',
-                ephemeral: true
+                content: 'Bạn không có nông sản nào để bán!',
+                flags: 64
             });
         }
 
@@ -29,20 +29,20 @@ module.exports = {
                 const earnings = crops[crop].sellPrice * quantity;
                 totalEarnings += earnings;
 
-                sellDetails.push(`🌽 **${crop}**: ${quantity} cây → 💵 **+${earnings} xu**`);
+                sellDetails.push(`**${crop}**: ${quantity} cây → 💵 **+${earnings} xu**`);
                 delete user.storage[crop]; // Xóa khỏi kho sau khi bán
             }
         }
 
         if (totalEarnings === 0) {
-            return interaction.reply('📦 Bạn không có nông sản hợp lệ để bán!');
+            return interaction.reply('Bạn không có nông sản hợp lệ để bán!');
         }
 
         user.money += totalEarnings;
         await user.save();
 
         return interaction.reply(
-            `✅ **Bán nông sản thành công!**\n${sellDetails.join('\n')}\n\n💰 **Tổng tiền nhận được: ${totalEarnings} xu**`
+            `**Bán nông sản thành công!**\n${sellDetails.join('\n')}\n\n💰 **Tổng tiền nhận được: ${totalEarnings} xu**`
         );
     }
 };

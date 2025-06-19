@@ -33,7 +33,7 @@ module.exports = {
             .filter(role => !!role);
 
         if (matchedRoles.length === 0) {
-            return interaction.reply({ content: "❌ Không tìm thấy role nào hợp lệ.", ephemeral: true });
+            return interaction.reply({ content: "❌ Không tìm thấy role nào hợp lệ.", flags: 64 });
         }
 
         const select = new StringSelectMenuBuilder()
@@ -55,6 +55,6 @@ module.exports = {
             components: [row],
         });
 
-        await interaction.reply({ content: `Đã gửi Select Menu vào ${channel}`, ephemeral: true });
+        await interaction.reply({ content: `Đã gửi Select Menu vào ${channel}`, flags: 64 });
     },
 };

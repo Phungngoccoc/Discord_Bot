@@ -4,7 +4,7 @@ const { getUserData, updateUserData } = require('../../../service/userService');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('blackjack')
-        .setDescription('🃏 Chơi Blackjack!')
+        .setDescription('Chơi Blackjack!')
         .addIntegerOption(option =>
             option.setName('bet')
                 .setDescription('Số tiền muốn cược')
@@ -15,15 +15,15 @@ module.exports = {
         const userId = interaction.user.id;
         const betAmount = interaction.options.getInteger('bet');
 
-        if (isNaN(betAmount) || betAmount <= 0) return interaction.reply({ content: 'Vui lòng nhập số tiền cược hợp lệ.', ephemeral: true });
-        if (betAmount > 200000) return interaction.reply({ content: 'Số tiền cược tối đa là 200,000 xu.', ephemeral: true });
+        if (isNaN(betAmount) || betAmount <= 0) return interaction.reply({ content: 'Vui lòng nhập số tiền cược hợp lệ.', flags: 64 });
+        if (betAmount > 200000) return interaction.reply({ content: 'Số tiền cược tối đa là 200,000 xu.', flags: 64 });
 
         let user = await getUserData(userId);
         if (!user) {
             user = { money: 1000 };
             await updateUserData(userId, { money: user.money });
         }
-        if (betAmount > user.money) return interaction.reply({ content: 'Bạn không đủ tiền để cược số tiền này.', ephemeral: true });
+        if (betAmount > user.money) return interaction.reply({ content: 'Bạn không đủ tiền để cược số tiền này.', flags: 64 });
 
         user.money -= betAmount;
         await updateUserData(userId, { money: user.money });

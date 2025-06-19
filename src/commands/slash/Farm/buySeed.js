@@ -6,7 +6,7 @@ const { crops } = require('../../../utils/constants');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('buyseed')
-        .setDescription('🌱 Mua hạt giống để trồng trọt')
+        .setDescription('Mua hạt giống để trồng trọt')
         .addStringOption(option =>
             option.setName('ten_hat')
                 .setDescription('Tên hạt giống muốn mua (ví dụ: carrot, corn...)')
@@ -29,15 +29,15 @@ module.exports = {
 
         if (!user || !farm) {
             return interaction.reply({
-                content: '🚜 Bạn chưa có trang trại! Dùng lệnh `/farm` để tạo nông trại mới.',
-                ephemeral: true
+                content: 'Bạn chưa có trang trại! Dùng lệnh `/farm` để tạo nông trại mới.',
+                flags: 64
             });
         }
 
         if (!crops[seedName]) {
             return interaction.reply({
-                content: `❌ Hạt giống không hợp lệ! Các loại hợp lệ: **${Object.keys(crops).join(', ')}**.`,
-                ephemeral: true
+                content: `Hạt giống không hợp lệ! Các loại hợp lệ: **${Object.keys(crops).join(', ')}**.`,
+                flags: 64
             });
         }
 
@@ -45,8 +45,8 @@ module.exports = {
 
         if (quantity > availableLand) {
             return interaction.reply({
-                content: `🚫 Bạn chỉ có **${availableLand}** ô đất trống, không thể mua **${quantity}** hạt giống!`,
-                ephemeral: true
+                content: `Bạn chỉ có **${availableLand}** ô đất trống, không thể mua **${quantity}** hạt giống!`,
+                flags: 64
             });
         }
 
@@ -54,8 +54,8 @@ module.exports = {
 
         if (user.money < totalCost) {
             return interaction.reply({
-                content: `💸 Bạn không đủ tiền! Cần **${totalCost} xu**, nhưng bạn chỉ có **${user.money} xu**.`,
-                ephemeral: true
+                content: `Bạn không đủ tiền! Cần **${totalCost} xu**, nhưng bạn chỉ có **${user.money} xu**.`,
+                flags: 64
             });
         }
 
@@ -75,6 +75,6 @@ module.exports = {
         await user.save();
         await farm.save();
 
-        return interaction.reply(`✅ Bạn đã mua **${quantity}** hạt giống **${seedName}** với giá **${totalCost} xu**!`);
+        return interaction.reply(`Bạn đã mua **${quantity}** hạt giống **${seedName}** với giá **${totalCost} xu**!`);
     }
 };

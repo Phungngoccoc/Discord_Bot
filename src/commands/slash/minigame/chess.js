@@ -6,7 +6,7 @@ const games = new Map(); // Lưu ván cờ theo userId
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('chess')
-        .setDescription('Chơi cờ vua với bot')
+        .setDescription('Chơi cờ vua')
         .addStringOption(option =>
             option.setName('move')
                 .setDescription('Nhập nước đi, ví dụ: e2e4')

@@ -4,7 +4,7 @@ const QuestionService = require('../../../service/questionService');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('addq')
-        .setDescription('📝 Thêm một câu hỏi trắc nghiệm mới'),
+        .setDescription('Thêm một câu hỏi trắc nghiệm mới'),
 
     async execute(interaction) {
         const modal = new ModalBuilder()
@@ -65,8 +65,8 @@ module.exports = {
                 const parts = option4Raw.split('|').map(p => p.trim());
                 if (parts.length !== 2) {
                     return modalInteraction.reply({
-                        content: '❌ Vui lòng nhập đúng định dạng: Đáp án 4 | vị trí đúng (0-3)',
-                        ephemeral: true,
+                        content: 'Vui lòng nhập đúng định dạng: Đáp án 4 | vị trí đúng (0-3)',
+                        flags: 64,
                     });
                 }
 
@@ -75,8 +75,8 @@ module.exports = {
 
                 if (isNaN(correctIndex) || correctIndex < 0 || correctIndex > 3) {
                     return modalInteraction.reply({
-                        content: '⚠ Vị trí đáp án đúng phải là số từ 0 đến 3!',
-                        ephemeral: true,
+                        content: 'Vị trí đáp án đúng phải là số từ 0 đến 3!',
+                        flags: 64,
                     });
                 }
 
@@ -87,14 +87,14 @@ module.exports = {
                 );
 
                 await modalInteraction.reply({
-                    content: '✅ Đã thêm câu hỏi thành công!',
-                    ephemeral: true,
+                    content: 'Đã thêm câu hỏi thành công!',
+                    flags: 64,
                 });
             } catch (err) {
-                console.error('❌ Lỗi khi thêm câu hỏi:', err);
+                console.error('Lỗi khi thêm câu hỏi:', err);
                 await interaction.reply({
-                    content: '❌ Đã xảy ra lỗi khi thêm câu hỏi.',
-                    ephemeral: true,
+                    content: 'Đã xảy ra lỗi khi thêm câu hỏi.',
+                    flags: 64,
                 });
             }
         });

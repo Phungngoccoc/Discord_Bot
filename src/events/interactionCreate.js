@@ -13,7 +13,7 @@ module.exports = async (client, interaction) => {
             console.error(`❌ Lỗi khi thực hiện slash command "${interaction.commandName}":`, error);
             const replyPayload = {
                 content: "⚠ Có lỗi xảy ra khi xử lý lệnh.",
-                ephemeral: true,
+                flags: 64,
             };
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp(replyPayload).catch(console.error);
@@ -38,13 +38,13 @@ module.exports = async (client, interaction) => {
 
             await interaction.reply({
                 content: `✅ Đã cập nhật role của bạn.`,
-                ephemeral: true,
+                flags: 64,
             });
         } catch (error) {
             console.error("❌ Lỗi khi xử lý reaction role:", error);
             await interaction.reply({
                 content: "⚠ Có lỗi khi cập nhật role.",
-                ephemeral: true,
+                flags: 64,
             });
         }
     }

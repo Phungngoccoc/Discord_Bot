@@ -13,7 +13,7 @@ module.exports = {
                 return message.reply("⚠️ Hiện tại đang có một ván Tài Xỉu diễn ra. Vui lòng chờ kết thúc trước khi bắt đầu ván mới!");
             }
 
-            gameRunning = true; 
+            gameRunning = true;
 
             const embed = new Discord.EmbedBuilder()
                 .setColor("#ffcc00")
@@ -38,7 +38,7 @@ module.exports = {
                     const userId = interaction.user.id;
 
                     if (userChoices.has(userId)) {
-                        return interaction.reply({ content: "⚠️ Bạn đã đặt cược rồi, không thể đặt tiếp!", ephemeral: true });
+                        return interaction.reply({ content: "⚠️ Bạn đã đặt cược rồi, không thể đặt tiếp!", flags: 64 });
                     }
 
                     const betChoice = interaction.customId === "bet_tai" ? "Tài" : "Xỉu";
@@ -71,17 +71,17 @@ module.exports = {
                     const betAmount = parseInt(interaction.fields.getTextInputValue("bet_amount"));
 
                     if (isNaN(betAmount) || betAmount <= 0) {
-                        return interaction.reply({ content: "Số tiền cược không hợp lệ!", ephemeral: true });
+                        return interaction.reply({ content: "Số tiền cược không hợp lệ!", flags: 64 });
                     }
 
                     const userData = await getUserData(userId);
                     if (!userData || isNaN(userData.money) || userData.money < betAmount) {
-                        return interaction.reply({ content: "Bạn không có đủ tiền để đặt cược!", ephemeral: true });
+                        return interaction.reply({ content: "Bạn không có đủ tiền để đặt cược!", flags: 64 });
                     }
 
                     const choice = userChoices.get(userId);
                     bets.set(userId, { choice, amount: betAmount });
-                    await interaction.reply({ content: `Bạn đã đặt cược **${betAmount}** xu vào **${choice}**!`, ephemeral: true });
+                    await interaction.reply({ content: `Bạn đã đặt cược **${betAmount}** xu vào **${choice}**!`, flags: 64 });
                 } catch (error) {
                     console.error("Lỗi khi xử lý đặt cược:", error);
                 }
@@ -133,7 +133,7 @@ module.exports = {
                 } catch (error) {
                     console.error("Lỗi khi xử lý kết quả trò chơi:", error);
                 } finally {
-                    gameRunning = false; 
+                    gameRunning = false;
                 }
             });
         } catch (error) {

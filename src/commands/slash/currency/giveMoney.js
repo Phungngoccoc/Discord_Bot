@@ -11,7 +11,7 @@ const { getUserData, updateUserData } = require('../../../service/userService');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('give')
-        .setDescription('💸 Chuyển xu cho người khác')
+        .setDescription('Chuyển xu cho người khác')
         .addUserOption(option =>
             option.setName('nguo_nhan')
                 .setDescription('Chọn người nhận')
@@ -30,20 +30,20 @@ module.exports = {
         const amount = interaction.options.getInteger('so_tien');
 
         if (receiver.bot) {
-            return interaction.reply({ content: '❌ Bot không thể nhận tiền!', ephemeral: true });
+            return interaction.reply({ content: 'Bot không thể nhận tiền!', flags: 64 });
         }
 
         if (receiver.id === sender.id) {
-            return interaction.reply({ content: '❌ Bạn không thể tự chuyển tiền cho chính mình!', ephemeral: true });
+            return interaction.reply({ content: 'Bạn không thể tự chuyển tiền cho chính mình!', flags: 64 });
         }
 
         if (amount <= 0 || isNaN(amount)) {
-            return interaction.reply({ content: '❌ Vui lòng nhập số tiền hợp lệ!', ephemeral: true });
+            return interaction.reply({ content: 'Vui lòng nhập số tiền hợp lệ!', flags: 64 });
         }
 
         const senderData = await getUserData(sender.id);
         if (!senderData || senderData.money < amount) {
-            return interaction.reply({ content: '❌ Bạn không có đủ tiền để chuyển!', ephemeral: true });
+            return interaction.reply({ content: 'Bạn không có đủ tiền để chuyển!', flags: 64 });
         }
 
         const embed = new EmbedBuilder()
@@ -55,11 +55,11 @@ module.exports = {
                 { name: 'Người nhận:', value: `<@${receiver.id}>`, inline: true },
                 { name: 'Số tiền:', value: `**${amount} xu**`, inline: false }
             )
-            .setFooter({ text: 'Nhấn ✅ để xác nhận hoặc ❌ để hủy.' });
+            // .setFooter({ text: 'Nhấn ✅ để xác nhận hoặc ❌ để hủy.' });
 
         const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId('confirm').setLabel('✅ Xác nhận').setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId('cancel').setLabel('❌ Hủy').setStyle(ButtonStyle.Danger)
+            new ButtonBuilder().setCustomId('confirm').setLabel('Xác nhận').setStyle(ButtonStyle.Success),
+            new ButtonBuilder().setCustomId('cancel').setLabel('Hủy').setStyle(ButtonStyle.Danger)
         );
 
         const reply = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
@@ -74,7 +74,7 @@ module.exports = {
                 const updatedSender = await getUserData(sender.id);
                 if (!updatedSender || updatedSender.money < amount) {
                     return i.update({
-                        content: '❌ Giao dịch thất bại: Bạn không đủ tiền!',
+                        content: 'Giao dịch thất bại: Bạn không đủ tiền!',
                         embeds: [],
                         components: []
                     });
@@ -88,13 +88,13 @@ module.exports = {
                 });
 
                 await i.update({
-                    content: `✅ <@${sender.id}> đã chuyển **${amount} xu** cho <@${receiver.id}> thành công!`,
+                    content: `<@${sender.id}> đã chuyển **${amount} xu** cho <@${receiver.id}> thành công!`,
                     embeds: [],
                     components: []
                 });
             } else {
                 await i.update({
-                    content: '❌ Giao dịch đã bị hủy!',
+                    content: 'Giao dịch đã bị hủy!',
                     embeds: [],
                     components: []
                 });
