@@ -6,7 +6,7 @@ const { loadWords } = require('../../../utils/loadVietnameseWords');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('addword')
-        .setDescription('📚 Thêm từ ghép vào từ điển nối từ')
+        .setDescription('Thêm từ ghép vào từ điển nối từ')
         .addStringOption(option =>
             option.setName('word')
                 .setDescription('Từ ghép 2 âm tiết bạn muốn thêm')

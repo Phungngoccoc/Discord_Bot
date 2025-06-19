@@ -3,7 +3,7 @@ const QuestionService = require('../../../service/questionService');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('addq')
+        .setName('addquiz')
         .setDescription('Thêm một câu hỏi trắc nghiệm mới'),
 
     async execute(interaction) {

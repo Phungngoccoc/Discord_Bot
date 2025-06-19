@@ -4,7 +4,7 @@ const GuildConfig = require('../../../model/guildConfig');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('setupchannel')
-        .setDescription('🔧 Thiết lập kênh hiện tại làm kênh chơi game nối từ'),
+        .setDescription('Thiết lập kênh hiện tại làm kênh chơi game nối từ'),
 
     async execute(interaction) {
         try {

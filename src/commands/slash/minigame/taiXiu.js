@@ -15,7 +15,7 @@ let gameRunning = new Set(); // Hỗ trợ nhiều kênh cùng lúc
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('tx')
+        .setName('taixiu')
         .setDescription('Chơi Tài Xỉu! Đặt cược và chờ kết quả!'),
 
     async execute(interaction) {

@@ -4,7 +4,7 @@ const GuildConfig = require('../../../model/guildConfig');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('setlogmessagechannel')
-        .setDescription('📝 Cài đặt kênh dùng để log khi tin nhắn bị xóa')
+        .setDescription('Cài đặt kênh dùng để log khi tin nhắn bị xóa')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     category: 'admin',
 

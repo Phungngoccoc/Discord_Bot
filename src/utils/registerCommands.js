@@ -34,7 +34,6 @@ const rest = new REST({ version: "10" }).setToken(config.token);
 (async () => {
     try {
         console.log("🔄 Đang đăng ký slash commands...");
-        console.log(commands)
         // Chọn một trong hai:
         // 🔹 GUILD (test nhanh)
         await rest.put(
