@@ -2,13 +2,14 @@ const config = require("../config/config.js");
 const sendImageByConfig = require('../utils/sendImage');
 const { EmbedBuilder } = require('discord.js');
 const wordGameManager = require('../utils/wordGameManager');
-
+const countingGameManager = require('../utils/countingGameManager');
+const GuildConfig = require('../model/guildConfig');
 module.exports = async (client, message) => {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim().toLowerCase();
     const channelId = message.channel.id;
-
+    const guildId = message.guild.id;
     // ✅ Gửi ảnh theo keyword
     if (['seg', 'girl', 'femboy', 'futa'].includes(content)) {
         await sendImageByConfig(message);
@@ -82,5 +83,9 @@ module.exports = async (client, message) => {
         } else {
             await message.react('❌');
         }
+    }
+    const guildConfig = await GuildConfig.findOne({ guildId });
+    if (guildConfig?.countingChannelId === channelId) {
+        return countingGameManager.handleCount(message);
     }
 };
