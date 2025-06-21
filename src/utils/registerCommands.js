@@ -42,10 +42,10 @@ const rest = new REST({ version: "10" }).setToken(config.token);
         );
 
         // 🔹 GLOBAL (chậm, nhưng dùng chung toàn server)
-        // const temp = await rest.put(
-        //     Routes.applicationCommands(config.clientId),
-        //     { body: commands }
-        // );
+        const temp = await rest.put(
+            Routes.applicationCommands(config.clientId),
+            { body: commands }
+        );
         console.log(`✅ Đăng ký thành công ${commands.length} slash commands!`);
     } catch (error) {
         console.error("❌ Lỗi khi đăng ký:", error);
