@@ -6,7 +6,7 @@ module.exports = (client) => {
     // client.guilds.cache.forEach(guild => {
     //     console.log(`- ${guild.name} (${guild.id}) | Members: ${guild.memberCount}`);
     // });
-    // client.guilds.fetch('1288430788488200234')
+    // client.guilds.fetch('1303194004929646672')
     //     .then(guild => {
     //         guild.leave().then(() => {
     //             console.log(`Đã rời khỏi guild: ${guild.name} (${guild.id})`);

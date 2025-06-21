@@ -6,7 +6,6 @@ const countingGameManager = require('../utils/countingGameManager');
 const GuildConfig = require('../model/guildConfig');
 module.exports = async (client, message) => {
     if (message.author.bot || !message.guild) return;
-
     const content = message.content.trim().toLowerCase();
     const channelId = message.channel.id;
     const guildId = message.guild.id;
@@ -36,7 +35,10 @@ module.exports = async (client, message) => {
         const args = message.content.slice(config.prefix.length).trim().split(/ +/);
         const commandName = args.shift().toLowerCase();
         const command = client.prefixCommands.get(commandName);
-
+        if (message.guild.id !== process.env.GUILD_ID) {
+            message.channel.send("Bot chỉ hoạt động trong server chính. Vui lòng lien hệ admin để được hỗ trợ.");
+            return;
+        };
         if (command) {
             try {
                 await command.execute(message, args, client);

@@ -1,5 +1,9 @@
 module.exports = async (client, interaction) => {
     // Slash command (Chat Input)
+    if (interaction.guild.id !== process.env.GUILD_ID) {
+        interaction.reply('Bot chỉ hoạt động trong server chính. Vui lòng liên hệ admin để được hỗ trợ.')
+        return
+    }
     if (interaction.isChatInputCommand()) {
         const command = client.slashCommands.get(interaction.commandName);
         if (!command) {
