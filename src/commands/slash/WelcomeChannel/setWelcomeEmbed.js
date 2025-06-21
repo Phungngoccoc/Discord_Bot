@@ -1,67 +1,73 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
 const GuildConfig = require('../../../model/guildConfig');
-const { PermissionFlagsBits } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+const fetch = require('node-fetch');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setName('setwelcomeembed')
         .setDescription('Thiết lập embed chào mừng thành viên mới')
-        .addStringOption(opt =>
-            opt.setName('title').setDescription('Tiêu đề').setRequired(true))
-        .addStringOption(opt =>
-            opt.setName('color').setDescription('Màu (hex hoặc tên màu)').setRequired(true))
-        .addStringOption(opt =>
-            opt.setName('description').setDescription('Nội dung (dùng \\n để xuống dòng)').setRequired(true))
-        .addStringOption(opt =>
-            opt.setName('footer').setDescription('Chân trang (tuỳ chọn, dùng \\n để xuống dòng)').setRequired(false))
-        .addAttachmentOption(opt =>
-            opt.setName('image').setDescription('Ảnh hoặc gif chào mừng (tuỳ chọn)').setRequired(false)),
+        .addStringOption(opt => opt.setName('title').setDescription('Tiêu đề').setRequired(true))
+        .addStringOption(opt => opt.setName('color').setDescription('Màu (hex hoặc tên màu)').setRequired(true))
+        .addStringOption(opt => opt.setName('description').setDescription('Nội dung (\\n = xuống dòng)').setRequired(true))
+        .addStringOption(opt => opt.setName('footer').setDescription('Chân trang (\\n = xuống dòng)').setRequired(false))
+        .addAttachmentOption(opt => opt.setName('image').setDescription('Ảnh/gif chào mừng').setRequired(false)),
 
     async execute(interaction) {
-        if (!interaction.member.permissions.has('Administrator')) {
-            return interaction.reply({
-                content: 'Bạn cần quyền **Quản trị viên (Administrator)** để dùng lệnh này.',
-                flags: 64
-            });
-        }
         const guildId = interaction.guild.id;
         const title = interaction.options.getString('title');
         const color = interaction.options.getString('color');
-        const description = interaction.options.getString('description');
-        const footer = interaction.options.getString('footer') || null;
-        const attachment = interaction.options.getAttachment('image');
+        const description = interaction.options.getString('description').replace(/\\n/g, '\n');
+        const footer = interaction.options.getString('footer')?.replace(/\\n/g, '\n') || null;
+        const image = interaction.options.getAttachment('image');
 
-        const parsedDescription = description.replace(/\\n/g, '\n');
-        const parsedFooter = footer ? footer.replace(/\\n/g, '\n') : null;
-        const image = attachment ? attachment.url : null;
+        let imageFilename = null;
 
-        let config = await GuildConfig.findOne({ guildId });
-        if (!config) {
-            config = new GuildConfig({ guildId });
+        // Lưu file ảnh vào thư mục assets nếu có ảnh
+        if (image) {
+            const ext = path.extname(image.name);
+            imageFilename = `welcome_${guildId}${ext}`;
+            const imagePath = path.join(__dirname, '../../../assets/welcome', imageFilename);
+
+            const response = await fetch(image.url);
+            const buffer = await response.arrayBuffer();
+            fs.writeFileSync(imagePath, Buffer.from(buffer));
         }
+
+        let config = await GuildConfig.findOne({ guildId }) || new GuildConfig({ guildId });
 
         config.welcomeEmbed = {
             title,
-            description: parsedDescription,
-            image,
-            footer: parsedFooter,
+            description,
+            image: imageFilename, // lưu tên file vào field `image`
+            footer,
             color
         };
 
         await config.save();
 
-        const previewEmbed = new EmbedBuilder()
-            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
-            .setColor(color || '#ffffff')
+        // Tạo Embed preview
+        const embed = new EmbedBuilder()
             .setTitle(title)
-            .setDescription(parsedDescription);
+            .setDescription(description)
+            .setColor(color);
 
-        if (image) previewEmbed.setImage(image);
-        if (parsedFooter) previewEmbed.setFooter({ text: parsedFooter });
+        if (footer) embed.setFooter({ text: footer });
+
+        const files = [];
+
+        if (imageFilename) {
+            const filePath = path.join(__dirname, '../../../assets/welcome', imageFilename);
+            embed.setImage(`attachment://${imageFilename}`);
+            files.push(new AttachmentBuilder(filePath, { name: imageFilename }));
+        }
 
         await interaction.reply({
-            content: '✅ Đã lưu embed chào mừng. Đây là bản preview:',
-            embeds: [previewEmbed]
+            content: 'Đã lưu embed chào mừng. Đây là bản preview:',
+            embeds: [embed],
+            files
         });
     }
 };

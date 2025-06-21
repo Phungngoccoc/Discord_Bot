@@ -1,11 +1,10 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const GuildConfig = require('../model/guildConfig');
+const path = require('path');
+const fs = require('fs');
 
 function parsePlaceholders(text, member) {
-    const guild = member.guild;
-
     return text
-        // .replace(/<@user>/g, `<@${member.user.id}>`)
         .replace(/<@user>/g, `${member.user.globalName || member.user.username}`);
 }
 
@@ -14,18 +13,17 @@ module.exports = async (client, member) => {
 
     const config = await GuildConfig.findOne({ guildId: member.guild.id });
     if (!config || !config.welcomeChannelId || !config.welcomeEmbed) {
-        console.log("⚠️ Thiếu config chào mừng hoặc channel");
+        console.log("Thiếu config chào mừng hoặc channel");
         return;
     }
 
     const channel = member.guild.channels.cache.get(config.welcomeChannelId);
     if (!channel) {
-        console.log("⚠️ Không tìm thấy kênh welcome:", config.welcomeChannelId);
+        console.log("Không tìm thấy kênh welcome:", config.welcomeChannelId);
         return;
     }
 
     const { title, description, image, footer, color } = config.welcomeEmbed;
-
     const parsedTitle = parsePlaceholders(title || '', member);
     const parsedDescription = parsePlaceholders(description || '', member);
     const parsedFooter = parsePlaceholders(footer || '', member);
@@ -38,7 +36,6 @@ module.exports = async (client, member) => {
             iconURL: member.user.displayAvatarURL()
         });
 
-
     try {
         embed.setColor(color || '#FFC0CB');
     } catch {
@@ -46,7 +43,18 @@ module.exports = async (client, member) => {
     }
 
     if (footer) embed.setFooter({ text: parsedFooter });
-    if (image) embed.setImage(image);
 
-    channel.send({ embeds: [embed] }).catch(console.error);
+    const files = [];
+
+    if (image) {
+        const filePath = path.join(__dirname, '../assets/welcome', image);
+        if (fs.existsSync(filePath)) {
+            embed.setImage(`attachment://${image}`);
+            files.push(new AttachmentBuilder(filePath, { name: image }));
+        } else {
+            console.warn('File ảnh không tồn tại:', filePath);
+        }
+    }
+
+    channel.send({ embeds: [embed], files }).catch(console.error);
 };

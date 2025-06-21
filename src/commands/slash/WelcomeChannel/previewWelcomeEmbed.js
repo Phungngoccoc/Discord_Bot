@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, PermissionFlagsBits } = require('discord.js');
 const GuildConfig = require('../../../model/guildConfig');
-const { PermissionFlagsBits } = require('discord.js');
+const path = require('path');
+const fs = require('fs');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
@@ -9,37 +11,56 @@ module.exports = {
 
     async execute(interaction) {
         const config = await GuildConfig.findOne({ guildId: interaction.guild.id });
+
         if (!config || !config.welcomeEmbed) {
             return interaction.reply({
-                content: '⚠️ Chưa thiết lập embed chào mừng. Hãy dùng lệnh `/setwelcomeembed`.',
-                flags: 64
+                content: 'Chưa thiết lập embed chào mừng. Hãy dùng lệnh `/setwelcomeembed`.',
+                ephemeral: true
             });
         }
 
         const { title, description, image, footer, color } = config.welcomeEmbed;
 
-        // Thay thế <@user> trong title/desc bằng user thật
         const parsedTitle = title?.replace(/<@user>/g, `<@${interaction.user.id}>`) || '';
         const parsedDescription = description?.replace(/<@user>/g, `<@${interaction.user.id}>`) || '';
 
         const embed = new EmbedBuilder()
             .setTitle(parsedTitle)
             .setDescription(parsedDescription)
-            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            });
 
         // Xử lý màu
         try {
             if (color) embed.setColor(color);
-        } catch (err) {
-            embed.setColor('#FFC0CB'); // fallback nếu màu lỗi
+        } catch {
+            embed.setColor('#FFC0CB');
         }
 
-        if (footer) embed.setFooter({ text: footer });
-        if (image) embed.setImage(image);
+        if (footer) {
+            embed.setFooter({ text: footer });
+        }
+
+        const files = [];
+
+        if (image) {
+            const imagePath = path.join(__dirname, '../../../assets/welcome', image);
+            if (fs.existsSync(imagePath)) {
+                embed.setImage(`attachment://${image}`);
+                files.push(new AttachmentBuilder(imagePath, { name: image }));
+            } else {
+                embed.setFooter({
+                    text: 'Ảnh được chỉ định không tồn tại trên máy chủ.'
+                });
+            }
+        }
 
         await interaction.reply({
-            content: '📢 Đây là bản preview embed chào mừng:',
+            content: 'Đây là bản preview embed chào mừng:',
             embeds: [embed],
+            files
         });
     }
 };
