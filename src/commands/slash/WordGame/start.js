@@ -13,7 +13,7 @@ module.exports = {
 
         const config = await GuildConfig.findOne({ guildId });
         if (!config || config.wordGameChannelId !== channelId) {
-            return interaction.reply({ content: 'Kênh này không phải kênh nối từ đã được thiết lập.', ephemeral: true });
+            return interaction.reply({ content: 'Kênh này không phải kênh nối từ đã được thiết lập.', flags: 64 });
         }
 
         wordGameManager.startGame(channelId);

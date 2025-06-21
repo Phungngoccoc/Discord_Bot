@@ -15,7 +15,7 @@ module.exports = {
         if (!config || !config.welcomeEmbed) {
             return interaction.reply({
                 content: 'Chưa thiết lập embed chào mừng. Hãy dùng lệnh `/setwelcomeembed`.',
-                ephemeral: true
+                flags: 64
             });
         }
 
