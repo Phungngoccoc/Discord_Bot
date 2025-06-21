@@ -55,19 +55,19 @@ module.exports = {
                 { name: 'Người nhận:', value: `<@${receiver.id}>`, inline: true },
                 { name: 'Số tiền:', value: `**${amount} xu**`, inline: false }
             )
-            // .setFooter({ text: 'Nhấn ✅ để xác nhận hoặc ❌ để hủy.' });
+        // .setFooter({ text: 'Nhấn ✅ để xác nhận hoặc ❌ để hủy.' });
 
         const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder().setCustomId('confirm').setLabel('Xác nhận').setStyle(ButtonStyle.Success),
             new ButtonBuilder().setCustomId('cancel').setLabel('Hủy').setStyle(ButtonStyle.Danger)
         );
 
-        const reply = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
-
+        await interaction.reply({ embeds: [embed], components: [row] });
+        const replyMessage = await interaction.fetchReply();
         const filter = i =>
             ['confirm', 'cancel'].includes(i.customId) && i.user.id === sender.id;
 
-        const collector = reply.createMessageComponentCollector({ filter, time: 30000 });
+        const collector = replyMessage.createMessageComponentCollector({ filter, time: 30000 });
 
         collector.on('collect', async i => {
             if (i.customId === 'confirm') {

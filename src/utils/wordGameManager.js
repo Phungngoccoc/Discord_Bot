@@ -26,10 +26,13 @@ function isValidWord(word) {
 }
 
 function isEligibleWord(word) {
-    const parts = word.trim().split(/\s+/);
-    const validPattern = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểẾỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸỳỵỷỹ\s]+$/;
-    return parts.length === 2 && validPattern.test(word);
+    const cleaned = word.trim().replace(/\s+/g, ' ').normalize('NFC');
+    const parts = cleaned.split(' ');
+    const validPattern = /^[\p{L} ]+$/u;
+
+    return parts.length === 2 && validPattern.test(cleaned);
 }
+
 
 function getFirstSyllable(word) {
     return word.trim().split(/\s+/)[0];
