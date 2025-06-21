@@ -12,6 +12,22 @@ const guildConfigSchema = new mongoose.Schema({
         image: String,
         footer: String,
         color: String
+    },
+    goodbyeChannelId: { type: String, default: null },
+    goodbyeEmbed: {
+        title: String,
+        description: String,
+        image: String,
+        footer: String,
+        color: String
+    },
+    boostChannelId: { type: String, default: null },
+    boostEmbed: {
+        title: String,
+        description: String,
+        image: String,
+        footer: String,
+        color: String
     }
 });
 
